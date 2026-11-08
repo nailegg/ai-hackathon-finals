@@ -14,7 +14,8 @@ export type Tool = { id: string; unavailable: [number, number][] };
 export type Problem = { jobs: Job[]; tools: Tool[] };
 export type Assignment = { jobId: string; stepId: string; toolId: string; start: number; end: number };
 export type Code = "MISSING_STEP" | "TOOL_NOT_ELIGIBLE" | "OVERLAP_ON_TOOL" | "PRECEDENCE"
-  | "BEFORE_RELEASE" | "IN_MAINTENANCE" | "DURATION_MISMATCH";
+  | "BEFORE_RELEASE" | "IN_MAINTENANCE" | "DURATION_MISMATCH"
+  | "DUPLICATE_ASSIGNMENT" | "UNKNOWN_JOB_STEP" | "UNKNOWN_TOOL" | "END_BEFORE_START";
 export type Violation = { code: Code; jobId?: string; stepId?: string; toolId?: string; detail?: string };
 export type Kpis = { makespan: number; totalTardiness: number; weightedTardiness: number; lateJobs: number };
 
@@ -33,23 +34,36 @@ export function computeKpis(problem: Problem, schedule: Assignment[]): Kpis {
 export function validateSchedule(problem: Problem, schedule: Assignment[]): { violations: Violation[]; kpis: Kpis } {
   const violations: Violation[] = [];
   const tools = new Map(problem.tools.map((t) => [t.id, t]));
-  const byKey = new Map<string, Assignment>();
-  for (const a of schedule) if (!byKey.has(`${a.jobId}|${a.stepId}`)) byKey.set(`${a.jobId}|${a.stepId}`, a);
+  const known = new Set(problem.jobs.flatMap((j) => j.steps.map((st) => `${j.id}|${st.id}`)));
+  const byKey = new Map<string, Assignment[]>();
+  for (const a of schedule) byKey.set(`${a.jobId}|${a.stepId}`, [...(byKey.get(`${a.jobId}|${a.stepId}`) ?? []), a]);
+  // 모든 배정을 개별 검사: 미등록 작업, 미등록 설비, 음수 길이, 중복
+  for (const a of schedule) {
+    const base = { jobId: a.jobId, stepId: a.stepId, toolId: a.toolId };
+    if (!known.has(`${a.jobId}|${a.stepId}`)) violations.push({ code: "UNKNOWN_JOB_STEP", ...base });
+    if (!tools.has(a.toolId)) violations.push({ code: "UNKNOWN_TOOL", ...base });
+    if (a.end < a.start) violations.push({ code: "END_BEFORE_START", ...base, detail: `end ${a.end} < start ${a.start}` });
+  }
+  for (const [key, items] of byKey) {
+    if (items.length > 1) { const [jobId, stepId] = key.split("|"); violations.push({ code: "DUPLICATE_ASSIGNMENT", jobId, stepId, detail: `${items.length} assignments` }); }
+  }
 
   for (const job of problem.jobs) {
     let prevEnd: number | null = null;
     for (const step of job.steps) {
-      const a = byKey.get(`${job.id}|${step.id}`);
-      if (!a) { violations.push({ code: "MISSING_STEP", jobId: job.id, stepId: step.id }); prevEnd = null; continue; }
-      const base = { jobId: job.id, stepId: step.id, toolId: a.toolId };
-      if (!step.eligibleTools.includes(a.toolId)) violations.push({ code: "TOOL_NOT_ELIGIBLE", ...base });
-      if (a.end - a.start !== step.duration) violations.push({ code: "DURATION_MISMATCH", ...base, detail: `${a.end - a.start} != ${step.duration}` });
-      if (a.start < (job.release ?? 0)) violations.push({ code: "BEFORE_RELEASE", ...base });
-      if (prevEnd !== null && a.start < prevEnd) violations.push({ code: "PRECEDENCE", ...base, detail: `start ${a.start} < prev end ${prevEnd}` });
-      for (const [ms, me] of tools.get(a.toolId)?.unavailable ?? []) {
-        if (a.start < me && ms < a.end) violations.push({ code: "IN_MAINTENANCE", ...base, detail: `overlaps [${ms},${me})` });
+      const assigns = byKey.get(`${job.id}|${step.id}`);
+      if (!assigns) { violations.push({ code: "MISSING_STEP", jobId: job.id, stepId: step.id }); prevEnd = null; continue; }
+      for (const a of assigns) { // 중복 배정도 각각 검사
+        const base = { jobId: job.id, stepId: step.id, toolId: a.toolId };
+        if (!step.eligibleTools.includes(a.toolId)) violations.push({ code: "TOOL_NOT_ELIGIBLE", ...base });
+        if (a.end - a.start !== step.duration) violations.push({ code: "DURATION_MISMATCH", ...base, detail: `${a.end - a.start} != ${step.duration}` });
+        if (a.start < (job.release ?? 0)) violations.push({ code: "BEFORE_RELEASE", ...base });
+        if (prevEnd !== null && a.start < prevEnd) violations.push({ code: "PRECEDENCE", ...base, detail: `start ${a.start} < prev end ${prevEnd}` });
+        for (const [ms, me] of tools.get(a.toolId)?.unavailable ?? []) {
+          if (a.start < me && ms < a.end) violations.push({ code: "IN_MAINTENANCE", ...base, detail: `overlaps [${ms},${me})` });
+        }
       }
-      prevEnd = a.end;
+      prevEnd = Math.max(...assigns.map((x) => x.end));
     }
   }
   const perTool = new Map<string, Assignment[]>();
@@ -90,5 +104,11 @@ if (process.argv[1] && process.argv[1].endsWith("validate_schedule.ts")) {
   assert(codes.join() === "BEFORE_RELEASE,DURATION_MISMATCH,OVERLAP_ON_TOOL,PRECEDENCE,TOOL_NOT_ELIGIBLE", codes.join());
   const maint = validateSchedule(problem, [{ jobId: "L2", stepId: "s1", toolId: "T1", start: 7, end: 9 }]).violations.map((v) => v.code);
   assert(maint.includes("IN_MAINTENANCE") && maint.filter((c) => c === "MISSING_STEP").length === 2, maint.join());
+  // 회귀: 중복 배정 + 미등록 작업(GHOST) + 미등록 설비(T9) + end<start
+  const ghost: Assignment[] = [...good,
+    { jobId: "L1", stepId: "s1", toolId: "T1", start: 8, end: 12 },
+    { jobId: "GHOST", stepId: "s1", toolId: "T9", start: 5, end: 3 }];
+  const gc = validateSchedule(problem, ghost).violations.map((v) => v.code);
+  for (const c of ["DUPLICATE_ASSIGNMENT", "UNKNOWN_JOB_STEP", "UNKNOWN_TOOL", "END_BEFORE_START"]) assert(gc.includes(c as Code), `${c} missing: ${gc.join()}`);
   console.log("OK validate_schedule");
 }

@@ -3,13 +3,14 @@
 용도: 시간순 분할(cutoff 또는 비율), 그룹 단위 분할(같은 lot 이 양쪽에 못 들어감),
       누수 의심 컬럼 탐지(예측 시점 이후 타임스탬프, 타깃과 완전 상관, 분할 간 중복 id).
 입력: rows = dict 리스트. 시간 컬럼은 비교 가능한 값(ISO 문자열, 숫자)이면 된다.
+규칙: 비율 분할에서 같은 시각의 행은 양쪽에 나뉘지 않는다(경계를 다음 시각으로 민다).
+      group_split 은 FNV-1a 32bit 해시 기반이라 seed 가 같으면 py/ts 가 같은 분할을 낸다.
 출력: (train, valid) 또는 report dict
 사용 예:
   train, valid = time_split(rows, time_col="t", frac=0.8)
   train, valid = group_split(rows, group_col="lot_id", frac=0.8, seed=0)
   report = leakage_report(rows, target="y", id_col="wafer_id", pred_time_col="t", time_cols=["measured_at"])
 """
-import random
 
 
 def time_split(rows, time_col, cutoff=None, frac=0.8):
@@ -19,18 +20,35 @@ def time_split(rows, time_col, cutoff=None, frac=0.8):
         valid = [r for r in ordered if r[time_col] >= cutoff]
     else:
         k = int(len(ordered) * frac)
+        # 같은 시각의 행이 train/valid 로 갈리지 않게 경계를 다음 시각으로 민다
+        while 0 < k < len(ordered) and ordered[k][time_col] == ordered[k - 1][time_col]:
+            k += 1
         train, valid = ordered[:k], ordered[k:]
     return train, valid
 
 
+def fnv1a32(text):
+    """FNV-1a 32bit. ts 버전과 같은 값을 낸다."""
+    h = 0x811C9DC5
+    for b in str(text).encode("utf-8"):
+        h ^= b
+        h = (h * 0x01000193) & 0xFFFFFFFF
+    return h
+
+
 def group_split(rows, group_col, frac=0.8, seed=0):
-    groups = sorted({r[group_col] for r in rows})
-    rnd = random.Random(seed)
-    rnd.shuffle(groups)
-    k = max(1, int(len(groups) * frac))
-    train_g = set(groups[:k])
-    train = [r for r in rows if r[group_col] in train_g]
-    valid = [r for r in rows if r[group_col] not in train_g]
+    """그룹 키 해시로 결정론적 분할. valid 비율 ≈ 1-frac. py/ts 동일 결과.
+    모든 그룹이 한쪽으로 쏠리면 해시가 가장 작은 그룹을 반대쪽으로 옮긴다."""
+    groups = sorted({str(r[group_col]) for r in rows})
+    valid_permille = int(round((1 - frac) * 1000))
+    valid_g = {g for g in groups if fnv1a32(f"{seed}:{g}") % 1000 < valid_permille}
+    if len(groups) > 1:
+        if not valid_g:
+            valid_g = {min(groups, key=lambda g: fnv1a32(f"{seed}:{g}"))}
+        elif valid_g == set(groups):
+            valid_g.discard(max(groups, key=lambda g: fnv1a32(f"{seed}:{g}")))
+    train = [r for r in rows if str(r[group_col]) not in valid_g]
+    valid = [r for r in rows if str(r[group_col]) in valid_g]
     return train, valid
 
 
@@ -85,6 +103,15 @@ if __name__ == "__main__":
 
     gtr, gva = group_split(rows, "lot_id", frac=0.5, seed=1)
     assert not ({r["lot_id"] for r in gtr} & {r["lot_id"] for r in gva}) and gtr and gva
+    # 회귀: 고정 fixture 의 분할 결과가 ts 와 같다 (fnv1a32 기준)
+    assert fnv1a32("") == 0x811C9DC5 and fnv1a32("a") == 0xE40C292C
+    fx = [{"g": g} for g in ["L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7"]]
+    _, fva = group_split(fx, "g", frac=0.75, seed=7)
+    assert sorted(r["g"] for r in fva) == ["L1", "L4", "L6"], sorted(r["g"] for r in fva)
+    # 회귀: 같은 시각의 행은 비율 분할에서 갈리지 않음
+    dup = [{"t": t} for t in [1, 1, 2, 2, 2, 3]]
+    dtr, dva = time_split(dup, "t", frac=0.5)
+    assert len(dtr) == 5 and dva[0]["t"] == 3, (len(dtr), dva)
 
     rep = leakage_report(rows, target="y", id_col="wafer_id", pred_time_col="t", time_cols=["measured_at"],
                          train=rows[:8], valid=rows[6:])

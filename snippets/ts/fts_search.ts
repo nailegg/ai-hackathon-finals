@@ -2,12 +2,16 @@
  * fts_search: 설치 없는 문서 검색(BM25) + 인용 형식.
  * 용도: SOP·매뉴얼을 문단 단위로 쪼개 BM25 로 검색하고 citation {source_id, chunk_id, snippet} 을 만든다.
  * 입력: docs = { [doc_id]: "본문" } (문단은 빈 줄로 구분)
+ * "근거 없음" 판정 규칙(권장): hits 가 비었거나, 1위 score < minScore 이거나,
+ *   1위의 matched_terms 가 2개 미만(질의 토큰이 2개 이상일 때)이면 기권(abstain)한다.
+ *   minScore 는 제공 질문 세트에서 정답 있는 질문의 1위 점수 분포로 정한다(기본 0 = 끄기).
  * 사용 예:
  *   const idx = new BM25Index(docs);
- *   const hits = idx.search("챔버 압력 상한", 3);
+ *   const hits = idx.search("챔버 압력 상한", 3, 1.0);
+ *   if (!hits.length || hits[0].matched_terms.length < 2) answer = "근거 없음";
  *   const cites = toCitations(hits);
  */
-export type Hit = { doc_id: string; chunk_id: string; score: number; snippet: string };
+export type Hit = { doc_id: string; chunk_id: string; score: number; matched_terms: string[]; snippet: string };
 export type Citation = { source_id: string; chunk_id: string; snippet: string };
 type Chunk = { doc_id: string; chunk_id: string; text: string };
 
@@ -41,19 +45,21 @@ export class BM25Index {
     const n = this.chunks.length;
     this.idf = new Map([...df].map(([t, d]) => [t, Math.log(1 + (n - d + 0.5) / (d + 0.5))]));
   }
-  search(query: string, k = 5): Hit[] {
-    const q = new Set(tokenize(query));
+  search(query: string, k = 5, minScore = 0): Hit[] {
+    const q = [...new Set(tokenize(query))].sort();
+    if (!q.length) return [];
     const scored: Hit[] = [];
     this.chunks.forEach((c, i) => {
-      let s = 0;
+      let s = 0; const matched: string[] = [];
       for (const term of q) {
         const f = this.tf[i].get(term) ?? 0; if (!f) continue;
+        matched.push(term);
         const denom = f + this.k1 * (1 - this.b + (this.b * this.len[i]) / this.avg);
         s += (this.idf.get(term) ?? 0) * (f * (this.k1 + 1)) / denom;
       }
-      if (s > 0) scored.push({ doc_id: c.doc_id, chunk_id: c.chunk_id, score: Math.round(s * 1e4) / 1e4, snippet: c.text.slice(0, 160) });
+      if (s > 0 && s >= minScore) scored.push({ doc_id: c.doc_id, chunk_id: c.chunk_id, score: Math.round(s * 1e4) / 1e4, matched_terms: matched, snippet: c.text.slice(0, 160) });
     });
-    return scored.sort((a, b) => b.score - a.score).slice(0, k);
+    return scored.sort((a, b) => b.score - a.score || a.chunk_id.localeCompare(b.chunk_id)).slice(0, k);
   }
 }
 
@@ -74,5 +80,9 @@ if (process.argv[1] && process.argv[1].endsWith("fts_search.ts")) {
   const cites = toCitations(hits);
   assert(cites[0].source_id === "SOP-ETCH-01" && typeof cites[0].snippet === "string", "citation");
   assert(idx.search("RF power 점검")[0].chunk_id === "SOP-CVD-02#p2", "rf");
+  // 회귀: 빈 질의·문법 문자·minScore·matched_terms
+  assert(idx.search("").length === 0 && idx.search("!!! ???").length === 0, "empty query");
+  assert(idx.search("챔버 압력 상한", 2, 1e9).length === 0, "min score");
+  assert(hits[0].matched_terms.length >= 2, "matched terms");
   console.log("OK fts_search");
 }

@@ -13,7 +13,21 @@ import math
 import statistics as st
 
 
+def _robust_scale(vals):
+    """1.4826*MAD. MAD 가 0 이면 표준편차로 대체, 그것도 0 이면 상수 그룹.
+    반환: (median, scale, source)  source ∈ {"mad", "std_fallback", "constant"}"""
+    med = st.median(vals)
+    mad = st.median([abs(v - med) for v in vals])
+    if mad > 0:
+        return med, 1.4826 * mad, "mad"
+    sd = st.pstdev(vals) if len(vals) > 1 else 0.0
+    if sd > 0:
+        return med, sd, "std_fallback"
+    return med, 0.0, "constant"
+
+
 def robust_z_by_group(rows, key, value, min_n=3):
+    """MAD=0 인 그룹이 상위 K 를 독식하지 않도록 scale 을 보정한다. 각 행에 scale_source 를 남긴다."""
     groups = {}
     for r in rows:
         if r.get(value) is not None:
@@ -21,26 +35,30 @@ def robust_z_by_group(rows, key, value, min_n=3):
     out = []
     for g, items in groups.items():
         vals = [float(r[value]) for r in items]
-        med = st.median(vals)
-        mad = st.median([abs(v - med) for v in vals]) or 1e-9
+        med, scale, source = _robust_scale(vals)
         for r in items:
-            z = 0.6745 * (float(r[value]) - med) / mad if len(vals) >= min_n else 0.0
-            out.append({**r, "robust_z": round(z, 3),
-                        "evidence": f"{key}={g} {value}={r[value]} median={med:.3g} MAD={mad:.3g} n={len(vals)}"})
+            v = float(r[value])
+            z = 0.0 if (len(vals) < min_n or scale == 0) else (v - med) / scale
+            out.append({**r, "robust_z": round(z, 3), "scale_source": source, "constant_group": source == "constant",
+                        "evidence": f"{key}={g} {value}={r[value]} median={med:.3g} scale={scale:.3g}({source}) n={len(vals)}"})
     out.sort(key=lambda r: -abs(r["robust_z"]))
     return out
 
 
-def rolling_z(values, window=10):
-    """각 시점의 값을 직전 window 개의 평균·표준편차로 표준화(미래 정보 사용 안 함)."""
+def rolling_z(values, window=10, cap=10.0):
+    """각 시점의 값을 직전 window 개의 평균·표준편차로 표준화(미래 정보 사용 안 함).
+    직전 구간이 상수(sd=0)면 같은 값은 0, 다른 값은 ±cap 으로 둔다(무한대 방지)."""
     out = []
     for i, v in enumerate(values):
         hist = values[max(0, i - window):i]
         if len(hist) < 2:
             out.append(0.0)
             continue
-        mu, sd = st.mean(hist), st.pstdev(hist) or 1e-9
-        out.append((v - mu) / sd)
+        mu, sd = st.mean(hist), st.pstdev(hist)
+        if sd == 0:
+            out.append(0.0 if v == mu else (cap if v > mu else -cap))
+        else:
+            out.append(max(-cap, min(cap, (v - mu) / sd)))
     return out
 
 
@@ -107,4 +125,16 @@ if __name__ == "__main__":
     nor = [{"temp": 100, "pres": 5.0}, {"temp": 101, "pres": 5.05}, {"temp": 99, "pres": 4.95}, {"temp": 100, "pres": 5.0}]
     tbl = compare_groups(abn, nor, ["temp", "pres"])
     assert tbl[0]["feature"] == "temp" and tbl[0]["rank_biserial"] == 1.0 and "evidence" in tbl[0]
+    # 회귀: MAD=0 그룹(한 점만 다름)이 상위를 독식하지 않고, 상수 그룹은 z=0 + 플래그
+    rows2 = [{"tool": "A", "v": x} for x in [5, 5, 5, 5, 6]] + \
+            [{"tool": "B", "v": x} for x in [10, 10.5, 9.5, 10.2, 30]] + \
+            [{"tool": "C", "v": x} for x in [7, 7, 7, 7]]
+    sc2 = robust_z_by_group(rows2, "tool", "v")
+    assert sc2[0]["tool"] == "B" and sc2[0]["v"] == 30, sc2[0]
+    a_rows = [r for r in sc2 if r["tool"] == "A"]
+    assert all(abs(r["robust_z"]) < 5 for r in a_rows) and a_rows[0]["scale_source"] == "std_fallback", a_rows[0]
+    c_rows = [r for r in sc2 if r["tool"] == "C"]
+    assert all(r["robust_z"] == 0.0 and r["constant_group"] for r in c_rows)
+    rz2 = rolling_z([2, 2, 2, 2, 2, 7], window=5)
+    assert rz2[-1] == 10.0 and rz2[-2] == 0.0
     print("OK group_compare")

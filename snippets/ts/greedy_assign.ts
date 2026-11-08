@@ -1,7 +1,8 @@
 /**
  * greedy_assign: 항상 feasible한 baseline 두 가지.
  * (a) greedySchedule: 우선순위·납기 순으로 가장 빨리 비는 적격 설비에 배치(정비 구간 회피)
- * (b) greedyCapacityAssign: 수요 있는 항목을 용량 남은 bin에 비용 최소/여유 최대 순 배정
+ * (b) greedyCapacityAssign: 수요 있는 항목을 용량 남은 bin에 비용 최소/여유 최대 순 배정.
+ *     cost 를 주면 표에 없는 (item, bin) 쌍은 금지로 보고 배정하지 않는다.
  * 사용 예:
  *   const sched = greedySchedule(problem);          // validate_schedule.ts 로 검증
  *   const res = greedyCapacityAssign(items, bins, cost);
@@ -56,10 +57,11 @@ export function greedyCapacityAssign(items: Item[], bins: Bin[], cost?: CostMatr
   const remaining = new Map(bins.map((b) => [b.id, b.capacity]));
   const assignment: Record<string, string> = {}; const unassigned: string[] = [];
   for (const it of [...items].sort((a, b) => b.demand - a.demand)) {
-    const cands = bins.filter((b) => (remaining.get(b.id) ?? 0) >= it.demand);
+    let cands = bins.filter((b) => (remaining.get(b.id) ?? 0) >= it.demand);
+    if (cost) cands = cands.filter((b) => cost[it.id]?.[b.id] !== undefined); // 표에 없는 쌍은 금지
     if (!cands.length) { unassigned.push(it.id); continue; }
     cands.sort((a, b) => cost
-      ? (cost[it.id]?.[a.id] ?? Infinity) - (cost[it.id]?.[b.id] ?? Infinity)
+      ? cost[it.id][a.id] - cost[it.id][b.id]
       : (remaining.get(b.id) ?? 0) - (remaining.get(a.id) ?? 0));
     assignment[it.id] = cands[0].id;
     remaining.set(cands[0].id, (remaining.get(cands[0].id) ?? 0) - it.demand);
@@ -110,5 +112,10 @@ if (process.argv[1] && process.argv[1].endsWith("greedy_assign.ts")) {
   const res = greedyCapacityAssign(items, bins);
   assert(res.unassigned.length === 0 && validateAssignment(items, bins, res.assignment).length === 0, "assign");
   assert(validateAssignment(items, bins, { a: "B2", b: "B2", c: "B2" }).map((v) => v.code).join() === "OVER_CAPACITY", "over");
+  // 회귀: cost 표에 없는 쌍은 금지
+  const cost: CostMatrix = { a: { B1: 1, B2: 5 }, b: { B1: 2, B2: 1 }, c: { B2: 1 } };
+  const res2 = greedyCapacityAssign(items, bins, cost);
+  assert(res2.assignment.c === "B2" && validateAssignment(items, bins, res2.assignment).length === 0, JSON.stringify(res2));
+  assert(greedyCapacityAssign([{ id: "x", demand: 1 }], bins, { x: {} }).unassigned.join() === "x", "forbidden all");
   console.log("OK greedy_assign");
 }

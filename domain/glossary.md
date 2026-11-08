@@ -53,7 +53,7 @@
 | PdM (Predictive) | 센서·이력 기반 고장 예측 정비. AX 핵심 영역 | 예측 점수 `risk_score` |
 | MTBF | Mean Time Between Failures. 고장 간 평균 가동 시간 | BM 이벤트 간격 평균 |
 | MTTR | Mean Time To Repair. 고장당 평균 수리 시간 | `down_end - down_start` 평균 |
-| 가동률 (Availability, Uptime) | 전체 시간 중 설비가 가동 가능했던 비율 | `(total - downtime)/total` |
+| 시간가동률 (Availability, Uptime) | 전체 시간 중 설비가 고장 없이 쓸 수 있었던 비율. 실제로 일한 비율인 Utilization(가동률·활용률)과 구분 | `(total - downtime)/total`, Utilization은 `busy_time/available_time` |
 | Work order | 정비 작업 지시서. 담당자·부품·소요시간·승인 | `wo_id`, `assigned_to`, `status`, `approved_by` |
 | 부품 BOM / 예비품 (Spare parts) | 설비 구성 부품 목록과 교체용 재고. 재고 30% 감축이 공개된 목표 | `part_id`, `qty_on_hand`, `lead_time_days`, `reorder_point` |
 | 정비 창 (Maintenance window) | 생산 영향이 적은 정비 가능 시간대 | `window_start`, `window_end` |

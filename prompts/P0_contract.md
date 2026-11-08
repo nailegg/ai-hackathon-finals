@@ -15,11 +15,14 @@
 - §10 Web Boilerplate 사용은 다음을 모두 만족할 때만 "예": 브라우저로 확인하는 웹 서비스 / 로그인·역할·데이터 저장 중 둘 이상 필요 / 언어·프레임워크·스타터 지정 없음 / 기존 코드 수리 아님 / node 20 이상.
 - §10 런타임 LLM API 제공 여부와 근거를 적는다. 없으면 LLM 없는 방식으로 §6·§7을 쓴다.
 - 부록이 필요하면 어떤 것인지만 §10에 적는다(WEB / RESULT_FILE / OR_SPEC / RAG_EVAL / ML_EVAL / REPAIR_MAP). 복사는 내가 한다.
+- 시각은 `date +%H:%M`으로 확인한 실제 시각으로 적는다. §0의 시작/점심/종료 시각 줄은 내가 적었거나 적을 것이다.
 끝나면 §1·§3·§7 요약과, 결과를 바꾸는 모호함(§9 중 되돌릴 비용 "높음")만 보고해라. 그 밖의 가정은 등록만 하고 진행한다.
 ```
 
 **사람 검토 체크 (3분):**
 - §5 역할표가 README와 맞는가. §7 AC1이 정말 가장 중요한 여정인가. §8에 필요한 기능이 들어가 있지 않은가.
 - §3 주 가설에 동의하는가. 자동 지표라면 §2 출력 형식이 sample과 정확히 같은가.
-- §10 형태와 shape를 보고 `~/finals/shapes/<형태>.md`, 필요하면 `~/finals/domain/scenarios/S0n.md` 경로를 §10에 직접 적는다. 부록을 복사한다: `cp ~/finals/contract/addenda/<부록>.md ./`
+- §10 형태와 shape를 보고 `~/finals/shapes/<형태>.md`, 필요하면 `~/finals/domain/scenarios/S0n.md` 경로를 §10에 직접 적는다. 데이터가 있으면 `~/finals/domain/data_patterns.md`도 적는다. 부록을 복사한다: `cp ~/finals/contract/addenda/<부록>.md ./`
+- 부록 복사 명령과 이름 규칙은 `~/finals/contract/addenda/README.md`가 기준이다.
+- 웹 안에 계산이 있으면 주 shape + 계산 shape 둘을 §10에 적는다(최대 2장).
 - 담당자에게 물을 것이 있으면 지금 묻고 답을 CONTRACT에 반영한다.

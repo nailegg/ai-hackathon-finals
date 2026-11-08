@@ -47,7 +47,7 @@
 | Cycle time | 완료 시각 − 투입 시각 | Lot | 재작업 Lot은 꼬리가 길다. 중앙값도 함께 | `(end_at - start_at)` |
 | Throughput | 기간 내 완료 Lot(또는 Wafer) 수 / 기간 | 일, 주 | 완료 기준(마지막 Step 종료)을 명시 | `completed.groupby(date).size()` |
 | Queue time | 설비 앞 대기 시간 = 처리 시작 − 도착 | Step, Tool | 반송 시간 포함 여부 | |
-| Utilization | 처리 시간 합 / 가용 시간 | Tool | 가동률과 혼동. 가동률은 "고장 안 남", 가동률은 "실제 일함" | |
+| Utilization (가동률·활용률) | 처리 시간 합 / 가용 시간 | Tool | Availability(시간가동률)와 혼동. Availability는 "고장 안 나서 쓸 수 있었던 시간 비율", Utilization은 "그중 실제로 일한 비율" | |
 
 ## 4. 스케줄링·최적화
 
@@ -71,8 +71,9 @@
 | Recall | TP / (TP+FN) | 불량을 놓치지 않기 | |
 | F1 | 2PR/(P+R) | 둘의 균형 | 임계값에 따라 바뀜, 임계값 명시 |
 | PR-AUC | Precision-Recall 곡선 아래 면적 | 희소 양성 | ROC-AUC는 불균형에서 낙관적 |
-| Recall@K | 점수 상위 K건 중 실제 양성 비율 | 점검 인력이 K건만 볼 때 | K를 업무 기준으로 정해 §9에 |
-| Lead time | 이상 탐지 시각 − 실제 불량 발생 시각 | 조기 탐지 | 음수면 사후 탐지 |
+| Recall@K | 점수 상위 K건에 포함된 양성 수 / 전체 양성 수 | 점검 인력이 K건만 볼 때 놓치는 불량 | Precision@K(상위 K건 중 양성 비율)와 다르다. K는 업무 기준으로 정해 §9에 |
+| Precision@K | 점수 상위 K건 중 실제 양성 비율 | 경보 K건의 적중률 | Recall@K와 함께 제시 |
+| Detection lead time | 실제 불량 발생(또는 검사 확정) 시각 − 이상 탐지 시각 | 조기 탐지. 양수가 클수록 일찍 잡음 | 음수면 사후 탐지. 부호 정의를 §6에 명시 |
 
 ## 6. 회귀·계측 예측
 

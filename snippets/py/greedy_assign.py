@@ -4,6 +4,7 @@
       (b) 용량 제약 배정: 수요가 있는 항목을 용량이 남은 bin에 비용 최소/가까운 순으로 배정
 입력 (a): validate_schedule 과 같은 problem 형식. 출력: schedule 리스트
 입력 (b): items=[{"id","demand"}], bins=[{"id","capacity"}], cost[item_id][bin_id] (선택)
+         cost 를 주면 표에 없는 (item, bin) 쌍은 **금지**로 보고 배정하지 않는다.
 출력 (b): {"assignment": {item_id: bin_id}, "unassigned": [...]}
 사용 예:
   sched = greedy_schedule(problem)              # 그 다음 validate_schedule 로 검증
@@ -60,11 +61,13 @@ def greedy_capacity_assign(items, bins, cost=None):
     assignment, unassigned = {}, []
     for it in sorted(items, key=lambda x: -x["demand"]):   # 큰 수요부터 (first-fit decreasing)
         cands = [b for b in bins if remaining[b["id"]] >= it["demand"]]
+        if cost is not None:   # 표에 없는 쌍은 금지
+            cands = [b for b in cands if cost.get(it["id"], {}).get(b["id"]) is not None]
         if not cands:
             unassigned.append(it["id"])
             continue
-        if cost:
-            cands.sort(key=lambda b: cost.get(it["id"], {}).get(b["id"], float("inf")))
+        if cost is not None:
+            cands.sort(key=lambda b: cost[it["id"]][b["id"]])
         else:
             cands.sort(key=lambda b: -remaining[b["id"]])   # 가장 여유 있는 bin
         chosen = cands[0]["id"]
@@ -139,4 +142,10 @@ if __name__ == "__main__":
     assert res["unassigned"] == [] and validate_assignment(items, bins, res["assignment"]) == []
     bad = {"a": "B2", "b": "B2", "c": "B2"}
     assert [v["code"] for v in validate_assignment(items, bins, bad)] == ["OVER_CAPACITY"]
+    # 회귀: cost 표에 없는 쌍은 금지
+    cost = {"a": {"B1": 1, "B2": 5}, "b": {"B1": 2, "B2": 1}, "c": {"B2": 1}}   # c 는 B1 금지
+    res2 = greedy_capacity_assign(items, bins, cost)
+    assert res2["assignment"]["c"] == "B2" and validate_assignment(items, bins, res2["assignment"]) == [], res2
+    res3 = greedy_capacity_assign([{"id": "x", "demand": 1}], bins, {"x": {}})
+    assert res3["unassigned"] == ["x"]
     print("OK greedy_assign")

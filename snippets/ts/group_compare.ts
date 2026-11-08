@@ -15,26 +15,40 @@ const median = (a: number[]) => { const s = [...a].sort((x, y) => x - y); const 
 const pstdev = (a: number[]) => { const m = mean(a); return Math.sqrt(a.reduce((s, x) => s + (x - m) ** 2, 0) / a.length); };
 const variance = (a: number[]) => { const m = mean(a); return a.reduce((s, x) => s + (x - m) ** 2, 0) / (a.length - 1); };
 
-export function robustZByGroup(rows: Row[], key: string, value: string, minN = 3): (Row & { robust_z: number; evidence: string })[] {
+export type ScaleSource = "mad" | "std_fallback" | "constant";
+/** 1.4826*MAD. MAD=0 이면 표준편차로 대체, 그것도 0 이면 상수 그룹. */
+export function robustScale(vals: number[]): { med: number; scale: number; source: ScaleSource } {
+  const med = median(vals), mad = median(vals.map((v) => Math.abs(v - med)));
+  if (mad > 0) return { med, scale: 1.4826 * mad, source: "mad" };
+  const sd = vals.length > 1 ? pstdev(vals) : 0;
+  return sd > 0 ? { med, scale: sd, source: "std_fallback" } : { med, scale: 0, source: "constant" };
+}
+
+export type ScoredRow = Row & { robust_z: number; scale_source: ScaleSource; constant_group: boolean; evidence: string };
+/** MAD=0 그룹이 상위 K 를 독식하지 않도록 scale 을 보정한다. */
+export function robustZByGroup(rows: Row[], key: string, value: string, minN = 3): ScoredRow[] {
   const groups = new Map<string, Row[]>();
   for (const r of rows) if (num(r[value]) !== null) groups.set(String(r[key]), [...(groups.get(String(r[key])) ?? []), r]);
-  const out: (Row & { robust_z: number; evidence: string })[] = [];
+  const out: ScoredRow[] = [];
   for (const [g, items] of groups) {
     const vals = items.map((r) => num(r[value]) as number);
-    const med = median(vals), mad = median(vals.map((v) => Math.abs(v - med))) || 1e-9;
+    const { med, scale, source } = robustScale(vals);
     for (const r of items) {
-      const z = vals.length >= minN ? (0.6745 * ((num(r[value]) as number) - med)) / mad : 0;
-      out.push({ ...r, robust_z: Math.round(z * 1000) / 1000, evidence: `${key}=${g} ${value}=${String(r[value])} median=${med.toPrecision(3)} MAD=${mad.toPrecision(3)} n=${vals.length}` });
+      const z = vals.length < minN || scale === 0 ? 0 : ((num(r[value]) as number) - med) / scale;
+      out.push({ ...r, robust_z: Math.round(z * 1000) / 1000, scale_source: source, constant_group: source === "constant", evidence: `${key}=${g} ${value}=${String(r[value])} median=${med.toPrecision(3)} scale=${scale.toPrecision(3)}(${source}) n=${vals.length}` });
     }
   }
   return out.sort((a, b) => Math.abs(b.robust_z) - Math.abs(a.robust_z));
 }
 
-export function rollingZ(values: number[], window = 10): number[] {
+/** 직전 구간이 상수(sd=0)면 같은 값은 0, 다른 값은 ±cap (무한대 방지). */
+export function rollingZ(values: number[], window = 10, cap = 10): number[] {
   return values.map((v, i) => {
     const hist = values.slice(Math.max(0, i - window), i);
     if (hist.length < 2) return 0;
-    return (v - mean(hist)) / (pstdev(hist) || 1e-9);
+    const mu = mean(hist), sd = pstdev(hist);
+    if (sd === 0) return v === mu ? 0 : v > mu ? cap : -cap;
+    return Math.max(-cap, Math.min(cap, (v - mu) / sd));
   });
 }
 
@@ -86,5 +100,14 @@ if (process.argv[1] && process.argv[1].endsWith("group_compare.ts")) {
   const nor: Row[] = [{ temp: 100, pres: 5.0 }, { temp: 101, pres: 5.05 }, { temp: 99, pres: 4.95 }, { temp: 100, pres: 5.0 }];
   const tbl = compareGroups(abn, nor, ["temp", "pres"]);
   assert(tbl[0].feature === "temp" && tbl[0].rank_biserial === 1 && tbl[0].evidence.length > 0, "compare");
+  // 회귀: MAD=0 그룹이 상위 독식하지 않음, 상수 그룹 z=0 + 플래그, rolling cap
+  const rows2: Row[] = [...[5, 5, 5, 5, 6].map((v) => ({ tool: "A", v })), ...[10, 10.5, 9.5, 10.2, 30].map((v) => ({ tool: "B", v })), ...[7, 7, 7, 7].map((v) => ({ tool: "C", v }))];
+  const sc2 = robustZByGroup(rows2, "tool", "v");
+  assert(sc2[0].tool === "B" && sc2[0].v === 30, `top ${JSON.stringify(sc2[0])}`);
+  const aRows = sc2.filter((r) => r.tool === "A");
+  assert(aRows.every((r) => Math.abs(r.robust_z) < 5) && aRows[0].scale_source === "std_fallback", "std fallback");
+  assert(sc2.filter((r) => r.tool === "C").every((r) => r.robust_z === 0 && r.constant_group), "constant group");
+  const rz2 = rollingZ([2, 2, 2, 2, 2, 7], 5);
+  assert(rz2[rz2.length - 1] === 10 && rz2[rz2.length - 2] === 0, "rolling cap");
   console.log("OK group_compare");
 }

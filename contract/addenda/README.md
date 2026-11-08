@@ -4,12 +4,22 @@ CONTRACT.md는 모든 형태에 공통인 코어다. 형태별 세부는 여기 
 
 | 부록 | 언제 | 채우는 주체 | 과제 루트 파일명 |
 |---|---|---|---|
-| `WEB.md` | 브라우저로 확인하는 웹 서비스 | 에이전트(P0 직후), 응시자 확정 | `WEB.md` |
-| `RESULT_FILE.md` | 출력 파일·CLI가 채점 대상 | 에이전트(P0 직후) | `RESULT_FILE.md` |
+| `WEB.md` | 브라우저로 확인하는 웹 서비스 | 에이전트가 P2 시작 시 빈칸을 채우고 보고 | `WEB.md` |
+| `RESULT_FILE.md` | 출력 파일·CLI가 채점 대상 | 에이전트가 P2 시작 시 | `RESULT_FILE.md` |
 | `DATA_CONTRACT.md` | 제공 데이터가 있을 때 (거의 항상) | 에이전트(P1) 또는 data specialist | `DATA_QUALITY.md` |
-| `OR_SPEC.md` | 최적화·배정·스케줄 계산 | 응시자 5분 또는 OR specialist | `OR_SPEC.md` |
-| `RAG_EVAL.md` | 문서 검색·질의응답·에이전트 | rag specialist 또는 에이전트 | `EVAL_SET.md` |
-| `ML_EVAL.md` | 예측·분류·이상탐지 모델 | 에이전트(P2 전) | `ML_EVAL.md` |
-| `REPAIR_MAP.md` | 기존 코드 수리 | 에이전트(R1) 또는 debug specialist | `REPAIR_MAP.md` |
+| `OR_SPEC.md` | 최적화·배정·스케줄 계산 | 응시자 5분, 또는 OR specialist, 또는 에이전트가 P2 시작 시 | `OR_SPEC.md` |
+| `RAG_EVAL.md` | 문서 검색·질의응답·에이전트 | rag specialist, 또는 에이전트가 P2 시작 시 | `EVAL_SET.md` |
+| `ML_EVAL.md` | 예측·분류·이상탐지 모델 | 에이전트가 P2 시작 시 | `ML_EVAL.md` |
+| `REPAIR_MAP.md` | 기존 코드 수리 | 에이전트가 P2 시작 시(코드 수정 전) 또는 debug specialist | `REPAIR_MAP.md` |
 
-복사 예: `cp ~/finals/contract/addenda/OR_SPEC.md ./OR_SPEC.md`
+**복사와 이름 규칙 (런북 T+15에서 응시자가 실행, 이 표가 유일한 기준):**
+```bash
+cp ~/finals/contract/addenda/WEB.md ./WEB.md                 # 필요한 것만
+cp ~/finals/contract/addenda/RESULT_FILE.md ./RESULT_FILE.md
+cp ~/finals/contract/addenda/OR_SPEC.md ./OR_SPEC.md
+cp ~/finals/contract/addenda/ML_EVAL.md ./ML_EVAL.md
+cp ~/finals/contract/addenda/REPAIR_MAP.md ./REPAIR_MAP.md
+cp ~/finals/contract/addenda/DATA_CONTRACT.md ./DATA_QUALITY.md   # 이름이 바뀐다
+cp ~/finals/contract/addenda/RAG_EVAL.md ./EVAL_SET.md            # 이름이 바뀐다
+```
+빈 템플릿은 P2 프롬프트 1단계에서 에이전트가 채운다. 보조 세션이 채우는 경우는 그 파일을 읽기만 한다.

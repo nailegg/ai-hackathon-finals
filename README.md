@@ -26,7 +26,7 @@ node -v; command -v pnpm || echo "no pnpm"; python3 -V
 | 기존 소스 + 실패 테스트 | `code_repair` | REPAIR_MAP | debug specialist | 제공 코드 |
 | 어디에도 깔끔히 맞지 않음 | `unknown` | 산출물에 따라 | research specialist | 표준 라이브러리 |
 
-판별 원칙: 혼합 과제는 **채점자가 직접 확인할 산출물**이 속한 형태를 주로 한다. 도메인(최적화, RAG)과 출력 형태(웹, 파일)를 분리해서 본다. 10분이 지나도 애매하면 분류를 멈추고 산출물·입력·검증 방법 세 가지로 결정한다.
+판별 원칙: 혼합 과제는 **채점자가 직접 확인할 산출물**이 속한 형태를 **주 shape**로 하고, 그 안의 최적화·분석은 **계산 shape**로 하나 더 적는다(최대 2장. 예: 역할 웹 + PM 일정 = `web_fullstack` + `or_optimization`). 도메인(최적화, RAG)과 출력 형태(웹, 파일)를 분리해서 본다. 10분이 지나도 애매하면 분류를 멈추고 산출물·입력·검증 방법 세 가지로 결정한다.
 
 ## 문서 지도
 
@@ -36,16 +36,16 @@ node -v; command -v pnpm || echo "no pnpm"; python3 -V
 | [contract/](contract) | 에이전트 | T+0 복사. `CONTRACT.md`(코어 + §0 상태판), `AGENTS.md`, `DECISIONS.md`, `addenda/`(형태별 부록 7종) |
 | [prompts/](prompts) | 사람이 복사 | P0 계약 → P1 데이터 → P2 AC1 → P3 반복 → P4 체크포인트 → P5 감사 → P6 제출. `specialists/`는 보조 세션 |
 | [shapes/](shapes) | 에이전트 | 형태별 작업 명세 8장. §10에 1장만 경로 지정 |
-| [domain/](domain) | 사람 학습 + 에이전트 참조 | 용어집, KPI 공식, 데이터 패턴, 시나리오 카드 S01~S10 |
+| [domain/](domain) | 사람 학습 + 에이전트 참조 | 용어집, KPI 공식, 데이터 패턴, 시나리오 카드 S01~S11 |
 | [snippets/](snippets) | 에이전트가 복사 | 의존성 없는 py/ts 7종, 각각 자가 테스트 |
 | [checklists/](checklists) | 사람 | `grading_2h.md`(2시간 심사 대비), `submission.md`, `recovery.md` |
 | [study/](study) | 사람 전용 | 11/9~10 학습 순서, 체크 문제 |
 
 ## 규칙 요약
 
-- 에이전트에게 주는 참고 문서는 **shape 1장 + 시나리오 카드 0~1장 + 과제 루트 부록**뿐이다. 폴더 전체를 읽히지 않는다.
+- 에이전트에게 주는 참고 문서는 **주 shape 1장(+계산 shape 1장) + 시나리오 카드 0~1장 + 데이터 패턴·KPI 문서 + shape가 이름을 댄 snippets + 과제 루트 부록**이다. 모두 CONTRACT §10에 경로로 적는다. 폴더 전체를 읽히지 않는다.
 - `CONTRACT.md` §1~§8 본문은 사람이 확정한다. 에이전트는 §0, §7 상태, §9 행 추가만 한다.
-- AC 상태는 검증 명령이 통과할 때만 바뀐다. 모든 검증을 모은 `verify` 한 줄이 채점자용 명령이다.
+- AC 상태는 검증 명령이 통과할 때만 바뀐다. 검증 명령은 둘이다. `verify-fast`(검증기·curl·테스트, AC마다)와 `verify-full`(빌드·깨끗한 재현 포함, 제출 전). 채점자용 한 줄 실행 명령은 §2에 따로 둔다.
 - 공개 자료로 확인된 하이닉스 AX 방향은 `domain/`에 출처와 함께 있고, 출제 예측은 모두 **가설**이다.
 
 > 시험 안내와 운영진의 최신 지침이 언제나 우선한다. 이 자료는 SK하이닉스/크래프톤의 공식 문서가 아니다.

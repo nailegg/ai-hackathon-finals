@@ -23,7 +23,7 @@
 |---|---|
 | T+0~15 계약(P0) | 타깃, 관측 단위(wafer/lot/시간), 지표, 제출 형식을 §2·§6에. 채점 지표가 없으면 §3에 가설 |
 | T+15~25 데이터(P1) | 스키마·결측·중복·시간 순서·**사용 금지 컬럼(미래 정보, 라벨 파생)** 을 §4에 |
-| T+25~90 AC1(P2) | 누수 없는 분할(시간/그룹) → 단순 baseline(평균·다수 클래스·고정 임계값) → 지표 → 제출 파일 형식 통과 |
+| T+25~90 AC1(P2) | **게이트는 T+45**: 평균·다수 클래스 baseline으로 제출 형식에 맞는 파일을 먼저 만든다(0점 방지). 이어서 누수 없는 분할(시간/그룹) → 지표 → T+90까지 첫 모델 |
 | T+90~점심 / 점심후~T+255 (P3, P4) | 모델 1~2개 비교(Ridge/트리), 그룹별 성능, 오류 분석. 보고서형이면 집단 비교 표와 그림 2~3개 |
 | T+255~285 감사(P5) | seed 고정 재실행 동일, 제출 파일 행 수·ID 일치, 누수 검사 재확인 |
 | T+285~305 제출문서(P6) | baseline 대비 지표 표, 가정, 한계, "원인 후보이며 인과 확정 아님" 명시 |
@@ -37,7 +37,8 @@
 ## 독립 검증
 - 분할 검사: 같은 lot이 train/valid에 동시에 없음, valid 시각이 train 이후
 - 제출 파일: ID 집합과 순서가 sample과 같음, 결측 없음
-- 예시 AC 검증 명령: `python check_submission.py out/submission.csv data/sample_submission.csv`; `python -c "import leakage; leakage.check('data/train.csv', target='y')"`; `python eval.py --pred out/valid_pred.csv` → 지표 출력
+- 예시 AC 검증 명령(모두 이 과제에서 직접 만드는 스크립트다. 없는 모듈을 찾지 않는다): `python scripts/check_submission.py out/submission.csv data/sample_submission.csv`(ID 집합·컬럼·행 수 비교); `python scripts/leakage_check.py data/train.csv --target y`(`time_split` 스니펫의 `leakage_report`를 복사해 작성); `python scripts/eval.py --pred out/valid_pred.csv` → 지표 출력
+- 지표 구현: 환경에 sklearn이 있으면 `sklearn.metrics`를 쓴다(채점기와 숫자를 맞추기 위해). 없을 때만 `metrics` 스니펫
 
 ## 지표
 - 주: 과제가 지정한 지표. 없으면 회귀 MAE/RMSE, 희소 분류 PR-AUC·Recall@K
@@ -60,7 +61,7 @@
 - `csv_load`: 인코딩·타입 추론
 
 ## 참고 시나리오 카드
-S01 공정 이상 분석·대응, S03 가상 계측·품질 예측, S09 후공정 테스트 저수율 분석, S06 실험 설계·조건 추천
+S01 공정 이상 분석·대응, S03 가상 계측·품질 예측, S09 후공정 테스트 저수율 분석, S06 실험 설계·조건 추천, S11 웨이퍼맵·이미지 불량 분류
 
 ## 만들지 않을 것
 - 딥러닝 학습, 대규모 하이퍼파라미터 탐색, 검증 없는 leaderboard 튜닝

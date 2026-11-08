@@ -22,6 +22,7 @@
 | 트리 (RF/HGB) | | | | |
 
 ## 지표 선택
+- 구현: sklearn이 import되면 `sklearn.metrics`(채점기와 일치). 없으면 `metrics` 스니펫. 어느 쪽인지 §10에 적는다
 - 희소 불량: PR-AUC, Recall@K, 혼동행렬. Accuracy 단독 금지
 - 회귀: MAE, RMSE, 그룹(Tool/Recipe)별 worst-case
 - 제출 전 valid 포함 재학습 여부와 seed:

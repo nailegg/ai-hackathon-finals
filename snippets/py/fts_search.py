@@ -4,10 +4,14 @@
       답변에 붙일 citation {source_id, chunk_id, snippet} 을 만든다.
       sqlite3 FTS5 가 있으면 같은 인터페이스의 DB 버전도 쓸 수 있다.
 입력: docs = {"doc_id": "본문 문자열"} (문단은 빈 줄로 구분)
-출력: [{"doc_id", "chunk_id", "score", "snippet"}] 상위 k 개
+출력: [{"doc_id", "chunk_id", "score", "matched_terms", "snippet"}] 상위 k 개
+"근거 없음" 판정 규칙(권장): hits 가 비었거나, 1위 score < min_score 이거나,
+  1위의 matched_terms 가 2개 미만(질의 토큰이 2개 이상일 때)이면 답하지 않고 기권(abstain)한다.
+  min_score 는 제공 질문 세트에서 정답이 있는 질문의 1위 점수 분포를 보고 정한다(기본 0 = 끄기).
 사용 예:
   idx = BM25Index(docs)
-  hits = idx.search("챔버 압력 상한", k=3)
+  hits = idx.search("챔버 압력 상한", k=3, min_score=1.0)
+  if not hits or len(hits[0]["matched_terms"]) < 2: answer = "근거 없음"
   cites = to_citations(hits)
 """
 import math
@@ -54,21 +58,25 @@ class BM25Index:
             c[t] = c.get(t, 0) + 1
         return c
 
-    def search(self, query, k=5):
+    def search(self, query, k=5, min_score=0.0):
         q = set(tokenize(query))
+        if not q:
+            return []
         scored = []
         for i, c in enumerate(self.chunks):
             s = 0.0
-            for term in q:
+            matched = []
+            for term in sorted(q):
                 f = self.tf[i].get(term, 0)
                 if not f:
                     continue
+                matched.append(term)
                 denom = f + self.k1 * (1 - self.b + self.b * self.len[i] / self.avg)
                 s += self.idf.get(term, 0) * f * (self.k1 + 1) / denom
-            if s > 0:
+            if s > 0 and s >= min_score:
                 scored.append({"doc_id": c["doc_id"], "chunk_id": c["chunk_id"], "score": round(s, 4),
-                               "snippet": c["text"][:160]})
-        scored.sort(key=lambda r: -r["score"])
+                               "matched_terms": matched, "snippet": c["text"][:160]})
+        scored.sort(key=lambda r: (-r["score"], r["chunk_id"]))
         return scored[:k]
 
 
@@ -94,7 +102,10 @@ class SqliteFTS:
     def search(self, query, k=5):
         if not self.available:
             return []
-        q = " OR ".join(f'"{t}"' for t in set(tokenize(query)))
+        toks = sorted(set(tokenize(query)))
+        if not toks:
+            return []
+        q = " OR ".join('"' + t.replace('"', '""') + '"' for t in toks)   # 토큰을 따옴표로 감싸 FTS5 문법 문자 무력화
         cur = self.con.execute(
             "SELECT doc_id, chunk_id, body, bm25(chunks) FROM chunks WHERE chunks MATCH ? ORDER BY bm25(chunks) LIMIT ?",
             (q, k))
@@ -115,7 +126,13 @@ if __name__ == "__main__":
     assert cites[0]["source_id"] == "SOP-ETCH-01" and "snippet" in cites[0]
     rf = idx.search("RF power 점검")
     assert rf[0]["chunk_id"] == "SOP-CVD-02#p2"
+    # 회귀: 빈 질의·문법 문자·min_score·matched_terms
+    assert idx.search("") == [] and idx.search("!!! ???") == []
+    assert idx.search("챔버 압력 상한", k=2, min_score=1e9) == []
+    assert hits[0]["matched_terms"] and len(hits[0]["matched_terms"]) >= 2
     fts = SqliteFTS(docs)
     if fts.available:
         assert fts.search("압력 상한")[0]["doc_id"] == "SOP-ETCH-01"
+        assert fts.search("") == [] and fts.search("*** NOT (") == []
+        assert fts.search('압력 " OR ( *') != [] or True   # 예외 없이 끝나면 충분
     print("OK fts_search" + ("" if fts.available else " (FTS5 없음, BM25만 확인)"))
