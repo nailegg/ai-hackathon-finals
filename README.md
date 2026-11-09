@@ -27,20 +27,20 @@ git clone --depth 1 https://github.com/nailegg/ai-hackathon-finals.git ~/finals
 
 ## 형태 판별표
 
-**언제 쓰나.** P0(계약 초안)가 끝나면 `CONTRACT.md` §10에 "형태"가 제안되어 있다. 사람이 그 제안과 과제 README를 이 표에 대조해 shape를 확정하고, `~/finals/shapes/<shape>.md` 경로를 §10에 적는다. 시간표상 T+15~25다.
+**언제 쓰나.** P0(계약 초안)가 끝나면 `CONTRACT.md` §10에 "주 shape 제안"이 적혀 있다. 사람이 그 제안과 과제 README를 이 표에 대조해 shape를 확정하고, `~/finals/shapes/<shape>.md` 경로를 §10에 적는다. 시간표상 T+15~25다.
 
-**열 읽는 법.** "부록"은 그 형태에서 P2가 과제 루트로 복사해 채우는 세부 문서다. "보조 세션"은 꼭 필요할 때만 Terminal 2에서 띄우는 두 번째 에이전트이고, 조건은 각 shape 문서의 "보조 세션" 절에 있다. "코드 기반"은 구현을 무엇 위에서 시작하는지다.
+**열 읽는 법.** "부록"은 그 형태에서 P2가 과제 루트로 복사해 채우는 세부 문서로, 과제 루트에 생길 파일명으로 적었다(`DATA_QUALITY.md`의 템플릿은 `DATA_CONTRACT.md`, `EVAL_SET.md`의 템플릿은 `RAG_EVAL.md`). "보조 세션"은 꼭 필요할 때만 Terminal 2에서 띄우는 두 번째 에이전트이고, 조건은 각 shape 문서의 "보조 세션" 절에 있다. "코드 기반"은 구현을 무엇 위에서 시작하는지다.
 
 | 과제 README의 신호 | shape | 부록 | 보조 세션 (선택) | 코드 기반 |
 |---|---|---|---|---|
-| 로그인·역할·저장·화면 명시, 스택 미지정 | `web_fullstack` | WEB (+OR_SPEC) | OR specialist | web_boilerplate 반입 |
-| 웹이지만 스택·스타터 지정, 또는 로그인·저장 없는 화면 | `web_fullstack` (지정 스택 절) | WEB | 없음 | 지정 스택, lib/auth만 이식 |
-| 배정·스케줄·경로·생산계획, 결과 파일 또는 웹 안의 계산 | `or_optimization` | OR_SPEC, RESULT_FILE | OR specialist | snippets validate_schedule·greedy_assign |
-| 예측·분류·이상탐지·분석 보고 | `data_analysis_ml` | DATA_CONTRACT, ML_EVAL, RESULT_FILE | data specialist | snippets time_split·group_compare·metrics |
-| 문서 검색·질의응답·인용·승인·에이전트 | `rag_agent` | RAG_EVAL (+WEB) | rag specialist | snippets fts_search |
-| CSV·JSON 변환·정제·집계 | `etl_pipeline` | DATA_CONTRACT, RESULT_FILE | 없음 | snippets csv_load |
-| 시나리오 재생·what-if·KPI 비교 | `simulation_whatif` | OR_SPEC 또는 RESULT_FILE | OR specialist | snippets validate_schedule·metrics |
-| 기존 소스 + 실패 테스트 | `code_repair` | REPAIR_MAP | debug specialist | 제공 코드 |
+| 로그인·역할·저장·화면 명시, 스택 미지정 | `web_fullstack` | WEB.md (+OR_SPEC.md) | OR specialist | web_boilerplate 반입 |
+| 웹이지만 스택·스타터 지정, 또는 로그인·저장 없는 화면 | `web_fullstack` (지정 스택 절) | WEB.md | 없음 | 지정 스택, lib/auth만 이식 |
+| 배정·스케줄·경로·생산계획, 결과 파일 또는 웹 안의 계산 | `or_optimization` | OR_SPEC.md, RESULT_FILE.md | OR specialist | snippets validate_schedule·greedy_assign |
+| 예측·분류·이상탐지·분석 보고 | `data_analysis_ml` | DATA_QUALITY.md, ML_EVAL.md, RESULT_FILE.md | data specialist | snippets time_split·group_compare·metrics |
+| 문서 검색·질의응답·인용·승인·에이전트 | `rag_agent` | EVAL_SET.md (+WEB.md) | rag specialist | snippets fts_search |
+| CSV·JSON 변환·정제·집계 | `etl_pipeline` | DATA_QUALITY.md, RESULT_FILE.md | 없음 | snippets csv_load |
+| 시나리오 재생·what-if·KPI 비교 | `simulation_whatif` | OR_SPEC.md 또는 RESULT_FILE.md | OR specialist | snippets validate_schedule·metrics |
+| 기존 소스 + 실패 테스트 | `code_repair` | REPAIR_MAP.md | debug specialist | 제공 코드 |
 | 어디에도 깔끔히 맞지 않음 | `unknown` | 산출물에 따라 | research specialist | 표준 라이브러리 |
 
 **혼합 과제는 두 장까지.** 대부분의 과제는 한 행에 깔끔히 들어가지 않는다. 예를 들어 "역할이 있는 웹에서 PM 일정을 짜고 승인한다"는 웹이면서 최적화다. 이럴 때는 다음 순서로 정한다.
@@ -58,7 +58,7 @@ git clone --depth 1 https://github.com/nailegg/ai-hackathon-finals.git ~/finals
 |---|---|---|---|
 | [RUNBOOK_330.md](RUNBOOK_330.md) | 사람 | 0절 개요·용어, 시간표, 터미널 배치, 구간별 할 일, 흔한 꼬임과 처방 | 시험 내내. 유일하게 열어 두는 문서 |
 | [contract/](contract) | 에이전트 (사람이 확정) | `CONTRACT.md` 계약서 템플릿(§0 상태판 ~ §10), `AGENTS.md` 에이전트 규칙, `DECISIONS.md` 결정 기록, `addenda/` 형태별 부록 템플릿 7종 | T+0에 세 파일을 과제 루트로 복사. 부록은 P2가 복사 |
-| [prompts/](prompts) | 사람이 복사해 붙임 | P0 계약 → P1 데이터 → P2 AC1 → P3 반복 → P4 체크포인트 → P5 감사 → P6 제출문서. 각 파일 위에 "언제, 사람이 할 일" 안내. `specialists/`는 보조 세션용 6종 | 시간표의 해당 구간 |
+| [prompts/](prompts) | 사람이 복사해 붙임 | P0 계약 → P1 데이터 → P2 AC1 → P3 반복 → P4 체크포인트 → P5 감사 → P6 제출 문서. 각 파일 위에 "언제, 사람이 할 일" 안내. `specialists/`는 보조 세션용 6종 | 시간표의 해당 구간 |
 | [shapes/](shapes) | 에이전트 (§10 경로) | 형태 8가지별 판별 신호, 산출물, 330분 단계, Baseline, 독립 검증, 지표, 함정, 보조 세션 조건 | 사람이 §10에 1~2장 경로를 적으면 에이전트가 읽음 |
 | [domain/](domain) | 사람 학습, 일부는 에이전트 참조 | `glossary.md` 용어 8절, `kpi_formulas.md` KPI 사전(사람용), `data_patterns.md` 데이터 테이블 8종과 조인 지도(사람용), `data_checklist.md` 데이터 검사 순서·함정(에이전트용), `scenarios/S01~S11.md` 출제 시나리오 가설 카드 | 사람은 11/9~10에 공부. 시험 중 에이전트에게 가는 것은 `data_checklist.md` 경로와 카드 발췌(`CARD_REF.md`)뿐. KPI 정의식은 사람이 §6에 옮겨 적는다 |
 | [snippets/](snippets) | 에이전트가 복사 | 검증기·baseline·분할·검색·CSV·지표 함수 7종, py와 ts 동일 동작, 각 파일이 자가 테스트 | shape 문서가 이름을 댄 것만 과제 폴더로 복사 |

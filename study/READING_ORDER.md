@@ -12,7 +12,7 @@
 | `contract/AGENTS.md` | 에이전트 행동 규칙. 우선순위, 금지 사항(git·API 키), 디렉터리 지도, 검증·보고 방식 | 에이전트 | T+0 복사. 세션 시작 시 자동 로드 |
 | `contract/DECISIONS.md` | append-only 결정 기록. `HH:MM \| 종류 \| 내용 \| 근거` | 둘 다 | 과정 평가와 서술형의 근거 |
 | `contract/addenda/` | 형태별 부록 템플릿 7종(WEB, RESULT_FILE, OR_SPEC, DATA_CONTRACT→DATA_QUALITY, RAG_EVAL→EVAL_SET, ML_EVAL, REPAIR_MAP). `README.md`에 복사 명령 | 에이전트 | §10에 적힌 것만 P2가 복사해 채움 |
-| `prompts/P0~P6` | 단계별로 붙여 넣는 프롬프트. P0 계약 → P1 데이터 → P2 AC1 → P3 반복 → P4 체크포인트 → P5 감사 → P6 제출문서 | 사람이 복사 | 각 파일 위에 "언제·사람이 할 일" 안내 |
+| `prompts/P0~P6` | 단계별로 붙여 넣는 프롬프트. P0 계약 → P1 데이터 → P2 AC1 → P3 반복 → P4 체크포인트 → P5 감사 → P6 제출 문서 | 사람이 복사 | 각 파일 위에 "언제·사람이 할 일" 안내 |
 | `prompts/specialists/` | 보조 세션용 프롬프트 6종(or, data, rag, debug, research, rubric). 읽기 전용, 결과 파일 1개, 10분 | 사람이 복사 | shape 문서의 "보조 세션" 조건을 만족할 때만 |
 | `shapes/` | 과제 **형태**별 작업 명세 8장. 판별 신호, 산출물, 330분 단계, Baseline, 독립 검증, 지표, 함정, 보조 세션 조건 | 에이전트(§10 경로) | 주 shape 1장 + 계산 shape 0~1장 |
 | `domain/glossary.md` | 반도체 용어집 8절(전공정, 후공정, 보전, 물류, KPI, 안전, AX 용어, 자가 점검) | 사람 | 에이전트에게는 필요할 때만 |
@@ -32,7 +32,7 @@
 
 ### 1단계 · 운영 뼈대 (60분) — 시험장에서 손이 움직이게
 1. `RUNBOOK_330.md` 처음부터 끝까지. 시간표의 구간 이름(P0~P6)과 각 구간에서 **사람이** 하는 일만 기억한다.
-2. `README.md`의 형태 판별표와 "판별 원칙" 문단. 주 shape / 계산 shape 구분.
+2. `README.md`의 형태 판별표와 "혼합 과제는 두 장까지" 문단. 주 shape / 계산 shape 구분.
 3. `contract/CONTRACT.md` 머리말(수정 권한)과 §0, §7, §9, §10만. 나머지 절은 제목만.
 4. `prompts/README.md` → `P0_contract.md`의 "사람 검토 체크" → `P2_slice.md`의 0)~6) 단계.
 - 확인: 시간표를 보지 않고 "T+15에 내가 하는 5가지"를 말할 수 있다(§10 경로 저장 → P1 붙이기 → 차이 3개 기록 → 카드 발췌 여부 → 보조 세션 여부).
@@ -68,7 +68,7 @@
 | 개념 | 알아야 할 것 |
 |---|---|
 | 주 shape / 계산 shape | 채점자가 확인할 산출물이 속한 형태가 주. 그 안의 계산·검색은 계산 shape. 최대 2장, 1:1로 안 맞으면 unknown 하나 |
-| CONTRACT 수정 권한 | 초안은 에이전트, 확정은 사람. 확정 뒤 에이전트는 §0·§4·§7 상태·§9·§10 런타임 줄만 |
+| CONTRACT 수정 권한 | 초안은 에이전트, 확정은 사람. 확정 뒤 에이전트가 고치는 범위는 CONTRACT 머리말 "수정 권한" 한 곳에만 적혀 있다(§0, §4, §7 상태·verify 줄, §9 추가, §10 런타임·검증·부록 줄) |
 | verify_fast.sh / verify_full.sh | fast는 AC마다(검증기·curl·테스트), full은 P5·제출 전(빌드·깨끗한 재현). 파일이 실체, CONTRACT엔 이름만 |
 | AC1 게이트 | 웹·최적화 T+90, 예측 파일·ETL T+45(baseline 제출 파일 먼저) |
 | CARD_REF 발췌 | 카드 원본은 에이전트에게 안 줌. Baseline~함정만 뽑고, 값은 예시, README 우선 |

@@ -19,16 +19,16 @@
 
 ## 카드 지도
 
-| 카드 | 형태 | 가장 가까운 shape |
-|---|---|---|
-| S01 공정 이상 분석 | 분석 + 웹 | data_analysis_ml |
-| S02 현장 지식 에이전트 | RAG + 승인 CRUD | rag_agent |
-| S03 가상 계측 | 예측 결과 파일 | data_analysis_ml |
-| S04 Fab 스케줄링 | 최적화 + 웹 | or_optimization |
-| S05 데이터 의미 통합 | ETL + 질의 | etl_pipeline |
-| S06 실험 설계 | 회귀 + 추천 | data_analysis_ml |
-| S07 보전 일정·부품 | 최적화 + 역할 웹 | or_optimization |
-| S08 OHT/AMR 배차 | 배정/VRP + 웹 | or_optimization |
-| S09 테스트 저수율 | 분석 + 웹 | data_analysis_ml |
-| S10 작업허가 승인 | 역할 CRUD 상태 머신 | web_fullstack |
-| S11 웨이퍼맵·이미지 불량 분류 | 분류 결과 파일 | data_analysis_ml |
+| 카드 | 산출물 | 주 shape | 계산 shape |
+|---|---|---|---|
+| S01 공정 이상 분석 | 분석 화면(또는 보고서) | web_fullstack(화면) / data_analysis_ml(보고서) | data_analysis_ml |
+| S02 현장 지식 에이전트 | 질의·승인 화면 | web_fullstack | rag_agent |
+| S03 가상 계측 | 예측 결과 파일 | data_analysis_ml | 없음 |
+| S04 Fab 스케줄링 | 일정 화면 또는 결과 파일 | web_fullstack(화면) / or_optimization(파일) | or_optimization |
+| S05 데이터 의미 통합 | 통합 테이블 + 질의 | etl_pipeline | rag_agent |
+| S06 실험 설계 | 추천 결과 파일·보고서 | data_analysis_ml | 없음 |
+| S07 보전 일정·부품 | 역할 웹 | web_fullstack | or_optimization |
+| S08 OHT/AMR 배차 | 배차 화면 | web_fullstack | or_optimization |
+| S09 테스트 저수율 | 분석 화면 | web_fullstack | data_analysis_ml |
+| S10 작업허가 승인 | 역할 CRUD 상태 머신 | web_fullstack | 없음 |
+| S11 웨이퍼맵·이미지 불량 분류 | 분류 결과 파일 | data_analysis_ml | 없음 |

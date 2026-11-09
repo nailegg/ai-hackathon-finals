@@ -17,8 +17,8 @@
 
 | | 사람(응시자) | 에이전트(Terminal 1) |
 |---|---|---|
-| 결정 | 계약 확정, 형태 선택, 범위 조정, 카드 사용 여부 | 결정하지 않는다. 모호하면 §9 가정으로 등록하고 진행 |
-| 쓰기 | `CONTRACT.md` §1~§8 본문, §10의 참고 문서 경로 | `CONTRACT.md` 초안 전체(P0·P1), 확정 뒤에는 §0·§4·§7 상태·§9·§10 런타임 줄만. 코드 전부 |
+| 결정 | 계약 확정, 주 shape·계산 shape 선택, 범위 조정, 카드 사용 여부 | 결정하지 않는다. 모호하면 §9 가정으로 등록하고 진행 |
+| 쓰기 | `CONTRACT.md` §1~§8 본문, §10의 참고 문서 경로 | `CONTRACT.md` 초안 전체(P0·P1), 확정 뒤에는 CONTRACT 머리말 "수정 권한"에 적힌 범위만. 코드 전부 |
 | 검증 | T+120·T+200에 `bash verify_fast.sh`를 직접 실행 | AC마다 `bash verify_fast.sh`, P5에서 `bash verify_full.sh` |
 | 기록 | `DECISIONS.md`에 결정 한 줄씩 | `DECISIONS.md`에 AC 완료·가정 한 줄씩, §0 상태판 갱신 |
 
@@ -34,6 +34,7 @@
 | **카드** | `~/finals/domain/scenarios/S01~S11.md`. 출제될 법한 도메인 시나리오의 **가설** 11장. 사람이 공부용으로 읽는다. 에이전트에게는 원본을 주지 않고, Baseline·독립 검증·KPI·함정 절만 뽑은 **`CARD_REF.md`**를 과제 루트에 만들어 준다 |
 | **부록** | `WEB.md`, `OR_SPEC.md`, `DATA_QUALITY.md` 같은 형태별 세부 문서. 템플릿은 `~/finals/contract/addenda/`에 있고, §10에 적힌 것만 에이전트가 P2 시작 때 과제 루트로 복사해 채운다 |
 | **P0~P6** | 단계별 프롬프트 파일 `~/finals/prompts/P?_*.md`. 사람이 열어서 코드 블록 안의 글을 Terminal 1에 붙여 넣는다 |
+| **검증기(validator)** | 계산 코드와 다른 파일에 둔 독립 검사 코드. §6 hard constraint와 출력 스키마를 다시 검사한다. verify_fast.sh가 이것을 호출한다 |
 | **`verify_fast.sh`, `verify_full.sh`** | 에이전트가 P2에서 과제 루트에 만드는 검증 스크립트. fast는 검증기·curl·테스트만 모아 AC마다 수십 초 안에 돈다. full은 fast에 빌드와 깨끗한 재현을 더한 것으로 P5와 제출 전에만 돈다 |
 | **보조 세션** | Terminal 2에서 사람이 띄우는 두 번째 에이전트. 읽기 전용, 결과 파일 1개, 동시 1개, 10분. 프롬프트는 `~/finals/prompts/specialists/` |
 | **T+n** | 시작 후 n분. **사람만 쓰는 표기**다. 에이전트는 시작 시각을 모르므로 `CONTRACT.md`와 `DECISIONS.md`에는 실제 시계 시각(HH:MM)만 쓴다 |
@@ -147,7 +148,7 @@ bash web/scripts/exam-init.sh --install
 
 - 로그인 뒤 다시 `/login`으로 돌아오면 쿠키 문제다. `web/.env`에 `COOKIE_SAMESITE="none"`, `COOKIE_SECURE="true"`를 추가하고 서버를 재시작한다.
 - 설치가 5분 넘게 실패하면 `rm -rf web`. 지정 스택이나 결과물 경로로 간다.
-- P0 보고의 §10이 "Boilerplate 사용: 아니오"면 `rm -rf web`, `DECISIONS.md`의 "web/ 반입" 줄을 지운다.
+- P0 보고의 §10이 "Boilerplate 사용: 아니오"면 `rm -rf web`. `DECISIONS.md`는 지우지 않고 `HH:MM | 결정 | web/ 삭제 (boilerplate 미사용) |` 한 줄을 추가한다.
 
 **(나) 결과물·CLI 과제일 가능성이 높으면** 3절에서 본 런타임 확인 결과(python, pandas, 솔버 유무)를 메모해 둔다. 5절에서 §10 런타임 줄에 적게 한다. `~/finals/snippets/`는 py·ts 둘 다 있으므로 어느 런타임이든 간다.
 
@@ -158,7 +159,7 @@ bash web/scripts/exam-init.sh --install
 P0 보고가 오면 아래 순서대로 한다. **순서가 중요하다.** 특히 1번을 2번보다 먼저 해야 에이전트와 같은 파일을 동시에 고치는 일이 없다.
 
 **1. §10에 참고 문서 경로를 적고 저장한다.**
-P0 보고의 §10 "형태" 항목을 보고, `~/finals/README.md`의 판별표에서 shape를 고른다. `CONTRACT.md` §10의 다음 줄을 채운다.
+P0 보고의 §10 "주 shape 제안" 항목을 보고, `~/finals/README.md`의 판별표에서 shape를 고른다. `CONTRACT.md` §10의 다음 줄을 채운다.
 - 주 shape: `~/finals/shapes/<이름>.md`
 - 계산 shape(있을 때만): 주 shape 안에 다른 형태의 계산·검색이 있으면 하나 더. 예: `web_fullstack` + `or_optimization`, `web_fullstack` + `rag_agent`. 최대 2장. 어느 형태에도 1:1로 맞지 않으면 `unknown` 하나만 적고 계산 shape는 비운다.
 - 데이터 체크리스트(데이터 파일이 있을 때): `~/finals/domain/data_checklist.md`. P1이 읽는다. 도메인 지식 없이 검사 순서와 함정만 있어 어떤 데이터에도 해가 없다.
@@ -192,7 +193,7 @@ HH:MM | 계약 | 확정 | shape=<이름>
 ```
 
 **7. 보조 세션이 필요하면 띄운다.**
-shape 문서의 "보조 세션" 절에 조건이 있다(예: 최적화에서 목적함수가 모호하거나 hard constraint가 3개 이상). 조건에 맞을 때만 Terminal 2에서 `~/finals/prompts/specialists/` 프롬프트로 띄운다. §0 "보조 결과 파일" 칸을 "반영 대기"로 적어 메인이 그 파일을 건드리지 않게 한다. 10분 뒤 결과 파일만 남기고 닫는다.
+shape 문서의 "보조 세션" 절에 조건이 있다(예: 최적화에서 목적함수가 모호하거나 hard constraint가 3개 이상). 조건에 맞을 때만 Terminal 2에서 `~/finals/prompts/specialists/` 프롬프트로 띄운다. §0 "보조 세션 출력 파일" 칸을 "반영 대기"로 적어 메인이 그 파일을 건드리지 않게 한다. 10분 뒤 결과 파일만 남기고 닫는다.
 
 이 절이 10분을 넘기면, 남은 검토는 §9 가정으로 넘기고 확정한다. 완벽한 계약보다 AC1 첫 통과가 먼저다.
 

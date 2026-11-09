@@ -15,8 +15,8 @@
 - 실행 한 줄 명령 → 결과 파일 생성 → 검증 스크립트 통과 로그
 - 웹이면 관리자가 "실행" → 결과 표/Gantt → 저장
 
-## 붙일 부록
-- `contract/addenda/OR_SPEC.md` (결정변수, hard/soft, baseline, 검증 사례, fallback)
+## 붙일 부록 (과제 루트 파일명. §10 '붙인 부록' 줄에 이 이름으로 적는다)
+- `OR_SPEC.md` (결정변수, hard/soft, baseline, 검증 사례, fallback)
 - 결과 파일 과제면 `RESULT_FILE.md`, 웹이면 `WEB.md`
 
 ## 330분 단계
@@ -27,7 +27,7 @@
 | T+25~90 AC1(P2) | 파서 → **독립 validator** → greedy baseline → KPI 계산 → 출력 파일. validator가 먼저다 |
 | T+90~점심 / 점심후~T+255 (P3, P4) | 나머지 AC. 필수 AC가 끝난 뒤에만 개선(CP-SAT/local search), time limit, 개선 전후 KPI를 DECISIONS에 |
 | T+255~285 감사(P5) | 위반 주입 fixture로 validator가 실패하는지, clean 재실행 동일 결과, 전체 입력에서 실행 시간 |
-| T+285~305 제출문서(P6) | 정식화 요약, baseline 대비 지표, 가정, 한계 |
+| T+285~305 제출 문서(P6) | 정식화 요약, baseline 대비 지표, 가정, 한계 |
 | T+305~330 제출 | 결과 파일명·형식이 §2와 바이트 단위로 일치하는지 |
 
 ## Baseline
@@ -41,6 +41,8 @@
 - 예시 AC 검증 명령: `python validate.py --problem data/problem.json --solution out/schedule.json` → `violations: 0`; `python validate.py --solution tests/bad_overlap.json` → 실패해야 함; 웹이면 `curl -X POST .../api/schedule/run` 후 `validate` 함수 위반 0
 
 ## 지표
+> §6 "지표 정의"가 비어 있을 때 §9 가정으로 제안할 후보다. §6에 정의가 있으면 그것만 계산한다.
+
 - 주: hard constraint 위반 0건(필수), 목적함수 값 vs baseline
 - 보조: 실행 시간, 미배정 수, 재계획 시 변경 폭
 - 함정 지표: 목적함수만 좋고 validator를 돌리지 않은 값
@@ -61,7 +63,7 @@
 - `metrics`: KPI 집계 보조
 
 ## 참고 시나리오 카드
-S04 Fab 스케줄링, S07 설비 보전 일정·부품 재고, S08 OHT/AMR 반송·배차, S10 안전·작업허가(일정 요소가 있을 때)
+§10에 `./CARD_REF.md`가 적혀 있을 때만 그 파일을 읽는다. 카드 원본은 읽지 않는다. (응시자용 메모, 닮은 카드: S04 Fab 스케줄링, S07 설비 보전 일정·부품 재고, S08 OHT/AMR 반송·배차, S10 안전·작업허가(일정 요소가 있을 때))
 
 ## 만들지 않을 것
 - 설치가 불확실한 솔버를 필수 의존성으로
@@ -69,4 +71,4 @@ S04 Fab 스케줄링, S07 설비 보전 일정·부품 재고, S08 OHT/AMR 반�
 - validator 없는 점수 튜닝
 
 ## 보조 세션 (선택)
-목적함수가 모호하거나 hard constraint가 3개 이상이라 정식화가 구현을 막을 때만. 사람이 Terminal 2에서 `prompts/specialists/specialist-or.md`로 띄운다. 동시 1개, 10분, 읽기 전용, 결과는 과제 루트 `OR_SPEC.md` 한 파일. Main은 그동안 파서·validator 골격을 만들고 `OR_SPEC.md`는 건드리지 않는다(§0 보조 결과 파일 칸이 "반영 대기"인 동안).
+목적함수가 모호하거나 hard constraint가 3개 이상이라 정식화가 구현을 막을 때만. 사람이 Terminal 2에서 `prompts/specialists/specialist-or.md`로 띄운다. 동시 1개, 10분, 읽기 전용, 결과는 과제 루트 `OR_SPEC.md` 한 파일. Main은 그동안 파서·validator 골격을 만들고 `OR_SPEC.md`는 건드리지 않는다(§0 보조 세션 출력 파일 칸이 "반영 대기"인 동안).
