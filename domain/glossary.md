@@ -31,7 +31,7 @@
 
 **이 일이 무엇인가.** Wafer 위에 회로를 쌓는 단계다. 한 층마다 증착 → 포토 → 식각 → 세정을 반복하고, 중간중간 계측(두께·선폭을 잰다)과 검사(결함을 찾는다)를 끼워 넣어 잘못되면 바로 잡는다. 장비마다 수백 개의 센서가 온도·압력·가스 유량을 초 단위로 기록하고(FDC), 측정값이 통계적 범위를 벗어나면 경보가 뜬다(SPC). 같은 종류의 장비라도 대수가 많고 장비 안에도 방(Chamber)이 여럿이라, "어느 장비의 어느 방을 지난 Lot이 나빴나"를 찾는 것이 품질 분석의 기본이다.
 
-**데이터에서 자주 하는 실수.** 같은 장비라도 처리하는 제품·Recipe가 다르면 결과가 다르다. 그래서 장비끼리 비교할 때는 같은 Recipe끼리 묶어서 봐야 한다. 또 Lot 한 줄과 Wafer 25줄을 조인하면 Lot 수량이 25배로 부풀어 보인다.
+**데이터에서 자주 하는 실수.** 같은 장비라도 처리하는 제품·Recipe가 다르면 결과가 다르다. 그래서 장비끼리 비교할 때는 같은 Recipe끼리 묶어서 봐야 한다. 또 같은 Recipe라도 APC가 Lot마다 조절값(offset)을 조금씩 바꾸므로, 장비 상태를 보려면 결과값과 함께 offset의 추세를 본다. 또 Lot 한 줄과 Wafer 25줄을 조인하면 Lot 수량이 25배로 부풀어 보인다.
 
 | 용어 | 쉬운 정의 | 데이터에서 |
 |---|---|---|
@@ -42,7 +42,7 @@
 | Line (라인) | Fab 안에서 한 제품 흐름을 끝까지 처리할 수 있는 장비 묶음. Fab 아래 중첩되며, 현장에서는 Fab과 같은 뜻으로도 쓴다 | `line_id`. 같은 값이 다른 Fab에 또 나올 수 있어 조인 키는 `(fab_id, line_id)` |
 | Tool / Equipment (설비) | 공정을 수행하는 장비 한 대. 한 라인에 같은 종류가 수십 대 | `tool_id`, `eqp_id`, `equipment_no` |
 | Chamber | 장비 안의 처리 방. 한 장비에 여러 방이 있고 방끼리 미세하게 다르다 | `chamber_id`, `ch_no` (A/B/C) |
-| Recipe | 장비에 설정하는 조건 묶음(온도·압력·시간·가스). 제품·Step마다 다르다 | `recipe_id`. 비교는 같은 Recipe끼리 |
+| Recipe | 장비에 설정하는 조건 묶음(온도·압력·시간·가스). 제품·Step마다 다르고, 엔지니어가 검증·승인해 **고정**한다. 안에 "이 값은 ±얼마까지 조정 허용"으로 열어 둔 소수의 조절 항목이 있다 | `recipe_id`. 비교는 같은 Recipe끼리. 실제 적용값은 `nominal + offset` |
 | Step / Operation | 공정 흐름의 한 칸. Lot은 수백 Step을 순서대로 지난다 | `step_id`, `oper_no`, `step_seq` |
 | Route / Flow | 제품별로 정해진 Step의 순서표 | `route_id`, `product_id` |
 | 증착 (Deposition) | 막을 한 겹 입히는 공정(CVD, PVD, ALD) | 두께 `thickness`, 균일도 `uniformity` |
@@ -54,7 +54,7 @@
 | MES | 공장 실행 시스템. Lot이 언제 어느 Step·장비를 지났는지 전부 기록 | `lot_history` 표의 출처 |
 | FDC | 장비 센서 데이터를 모아 이상을 찾는 시스템 | `tool_sensor` 시계열, `trace_id`, 초 단위 |
 | SPC | 측정값을 관리도에 찍어 통계적 범위(±3σ)를 벗어나면 경보 | `ucl`, `lcl`, `ooc_flag`(out of control) |
-| APC | 이전 결과를 보고 다음 Recipe를 자동으로 조금씩 보정 | `offset`, `feedback_value` |
+| APC | Recipe는 그대로 두고, 허용 범위 안의 조절 항목(식각 시간, 노광량 등)에 더하는 보정값(offset)을 Lot마다 자동 계산. 앞 Lot의 계측 결과로 다음 Lot을 고치면 피드백(run-to-run), 앞 공정 계측값으로 이번 Lot을 미리 고치면 피드포워드 | `nominal`, `offset`, `actual`, `feedback_value`. **함정**: 결과값은 APC가 맞춰 줘 멀쩡해 보여도 offset이 커지는 추세면 장비가 한계에 가까운 것. offset이 허용 범위 끝에 붙으면(saturation) 곧 불량 |
 | EAP | 장비와 MES를 연결하는 자동화 소프트웨어 층 | 장비 이벤트 로그 |
 | SOP | 표준 작업 절차서. "이럴 때 이렇게 하라"를 적은 문서 | `doc_id`, `step`, `precondition`, `warning` |
 | OCAP | SPC 경보가 떴을 때 따르는 조치 절차. SOP의 한 종류 | |
