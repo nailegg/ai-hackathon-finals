@@ -37,7 +37,7 @@
 
 ## Baseline
 - SQLite FTS5 또는 단순 토큰 매칭으로 상위 3개 단락 검색, 단락 ID를 인용으로 붙임. 점수가 임계값 미만이면 "근거 없음"
-- 도구는 `query_readonly(sql)`(SELECT·LIMIT 강제)와 `search_manual(q)` 두 개로 시작
+- 도구는 둘로 시작. 이름·인자는 README 기준(예: `query_readonly(sql)`에 SELECT·LIMIT 강제, `search_manual(q)`)
 
 ## 독립 검증
 - 인용된 문서 ID·단락이 실제로 존재하고 답변 문장이 그 단락에 근거함

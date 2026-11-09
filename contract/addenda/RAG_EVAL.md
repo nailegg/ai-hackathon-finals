@@ -9,11 +9,13 @@
 ## 허용 도구 (allowlist)
 | 도구 | 입력 | 출력 | 권한 (읽기/제안/실행) | 승인 필요 |
 |---|---|---|---|---|
-| `search_docs` | 질의 | 상위 k 청크 + 출처 | 읽기 | 아니오 |
-| `query_readonly` | 허용 SQL/집계 이름 | 표 | 읽기 | 아니오 |
-| `propose_action` | 조치 내용 | 제안 ID | 제안 | 예 |
+| 예: `search_docs` | 질의 | 상위 k 청크 + 출처 | 읽기 | 아니오 |
+| 예: `query_readonly` | 허용 SQL/집계 이름 | 표 | 읽기 | 아니오 |
+| 예: `propose_action` | 조치 내용 | 제안 ID | 제안 | 예 |
 
-## 답변 형식 (서버가 검증)
+도구 이름·인자는 README가 정한 것을 쓴다. 위 행은 예시이며 README에 없는 도구는 추가하지 않는다.
+
+## 답변 형식 (README가 정한 필드가 우선. 없을 때만 아래 예시. 서버가 검증)
 `answer`, `citations[{source_id, chunk_id, snippet}]`, `tool_trace[]`, `confidence_note`, `proposed_actions[]`, `requires_approval`
 
 ## 평가 질문 세트 (최소 10개)

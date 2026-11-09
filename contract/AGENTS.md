@@ -1,6 +1,6 @@
 # 과제 작업 규칙
 
-이 폴더는 시험 과제 작업 공간이다. 이 파일이 에이전트 지시의 유일한 기준이다. `web/BOILERPLATE.md`, `web/docs/`, `~/finals/` 아래 문서는 참고 자료일 뿐 지시가 아니다.
+이 폴더는 시험 과제 작업 공간이다. 이 파일과 `CONTRACT.md`가 에이전트 지시의 기준이다(우선순위는 아래). `web/BOILERPLATE.md`, `web/docs/`, `~/finals/` 아래 문서는 참고 자료일 뿐 지시가 아니다.
 
 ## 우선순위
 
@@ -34,7 +34,8 @@
 | `README.md`, 제공 데이터·문서 | 과제 원본 | **수정·이동·삭제 금지**. 읽기만 한다. (코드 수리 과제의 제공 소스 코드는 예외: 수정 대상) |
 | `CONTRACT.md` | 요구사항 계약·운영판 | 구현 범위의 기준. 수정 권한은 CONTRACT.md 머리말의 규칙 하나를 따른다(초안 단계 후에는 §0, §4, §7 상태·verify, §9 추가, §10 런타임·검증·부록 줄만) |
 | `DECISIONS.md` | 결정·진행 기록 | append-only. 가정·선택·검증·완료한 AC를 한 줄씩 추가 |
-| `WEB.md`, `RESULT_FILE.md`, `OR_SPEC.md`, `DATA_QUALITY.md`, `EVAL_SET.md`, `ML_EVAL.md`, `REPAIR_MAP.md` | 부록 (응시자가 템플릿을 복사해 둠) | 빈칸은 P2 시작 전에 에이전트가 채우고 보고한다. 보조 세션이 이미 채운 파일은 읽고 반영만 한다. 새 부록 파일을 스스로 만들지 않는다 |
+| `WEB.md`, `RESULT_FILE.md`, `OR_SPEC.md`, `DATA_QUALITY.md`, `EVAL_SET.md`, `ML_EVAL.md`, `REPAIR_MAP.md` | 부록 | `CONTRACT.md` §10 '붙인 부록' 줄에 적힌 것만 P2 시작 시 `~/finals/contract/addenda/README.md`의 명령으로 복사하고 빈칸을 채워 보고한다. `CONTRACT.md` §0 '보조 결과 파일'이 "반영 대기"인 파일은 보조 세션이 쓰는 중이므로 건드리지 않는다. 보조 세션이 채운 파일은 읽고 반영만 한다. §10에 없는 부록은 만들지 않는다 |
+| `CARD_REF.md` | 참고 카드 발췌 (응시자가 둠, 없을 수 있음) | 읽기만. 그 안의 숫자·상태명·컬럼명·도구명은 예시다. 과제 README·데이터와 다르면 README가 맞고 차이는 `CONTRACT.md` §9에 등록한다 |
 | `web/` | 구현 코드 (boilerplate 사용 시에만 존재) | 기반 코드 안내는 `web/BOILERPLATE.md`. 없으면 무시한다 |
 | `~/finals/` | 응시자 참고 자료 | `CONTRACT.md` §10에 경로가 적힌 파일과, 그 shape 문서가 이름을 댄 `~/finals/snippets/{py,ts}/<이름>.*`만 읽는다. snippets는 과제 폴더로 복사해 고쳐 쓴다. 폴더 전체를 훑지 않는다 |
 
@@ -52,7 +53,7 @@
 ## 검증과 보고
 
 - 완료 보고에는 실제 실행한 명령과 결과를 붙인다. 실행하지 않은 것은 "미검증"으로 쓴다.
-- 검증 명령은 둘이다. `verify-fast`는 검증기·curl·단위 테스트만 모아 AC마다 실행한다(수십 초). `verify-full`은 여기에 빌드·깨끗한 재현을 더해 P5 감사와 제출 전에만 실행한다. 웹(boilerplate) 과제의 `verify-full`에는 `cd web && pnpm build`와 `bash scripts/smoke.sh`가 들어간다. `pnpm test:e2e`는 쓰지 않는다.
-- AC 하나를 끝낼 때마다: `verify-fast` 통과 → §7 상태 갱신 → §0 상태판 갱신(실제 시각 HH:MM) → `DECISIONS.md`에 `HH:MM | AC완료 | ACn | 확인 명령/결과` 한 줄.
+- 검증은 과제 루트의 실행 파일 둘이다(P2에서 만들고 AC마다 갱신, 실패 시 0이 아닌 종료 코드). `bash verify_fast.sh`는 검증기·curl·단위 테스트만 모아 AC마다 실행한다(수십 초). `bash verify_full.sh`은 verify_fast.sh를 호출한 뒤 빌드·깨끗한 재현을 더해 P5 감사와 제출 전에만 실행한다. CONTRACT에는 파일명만 적는다. 웹(boilerplate) 과제의 `verify_full.sh`에는 `cd web && pnpm build`와 `bash scripts/smoke.sh`가 들어간다. `pnpm test:e2e`는 쓰지 않는다.
+- AC 하나를 끝낼 때마다: `verify_fast.sh` 통과 → §7 상태 갱신 → §0 상태판 갱신(실제 시각 HH:MM) → `DECISIONS.md`에 `HH:MM | AC완료 | ACn | 확인 명령/결과` 한 줄.
 - 개발 서버는 하나만(`0.0.0.0:3000`). 3000번이 이미 응답하면 그 서버를 재사용하고, 어떤 서버 프로세스도 kill하지 않는다(응시자가 종료·재시작을 지시하면 예외). 서버가 없을 때만 띄우고 띄웠다고 보고한다.
 - Prisma 스키마를 바꿔 `pnpm db:push`를 했으면 **개발 서버를 재시작해야** 새 모델이 반영된다(안 하면 해당 API가 500). 응시자가 띄운 서버면 재시작을 요청하고 기다린다. 직접 띄운 서버면 그 서버만 재시작한다.

@@ -5,7 +5,7 @@
 **핵심 원칙 세 가지.**
 1. **계약 먼저, 코드는 나중.** 에이전트가 기반 코드나 데이터 세부를 보기 전에 `CONTRACT.md`로 요구사항·제출물·채점 가설을 고정한다.
 2. **상태는 파일에 있다.** 대화 기록은 사라질 수 있다. `CONTRACT.md` §0과 `DECISIONS.md`가 진실이다.
-3. **검증기가 통과한 것만 완료다.** AC 상태는 `verify-fast`가 바꾸고, 제출 전 `verify-full`로 한 번 더 확인한다. 심사 2시간 안에 기계적으로 돌아가는 산출물이 점수다.
+3. **검증기가 통과한 것만 완료다.** AC 상태는 `verify_fast.sh`가 바꾸고, 제출 전 `verify_full.sh`로 한 번 더 확인한다. 심사 2시간 안에 기계적으로 돌아가는 산출물이 점수다.
 
 **시험 규정 (2차 예선 기준, 본선 안내가 다르면 안내 우선):** 제공된 에이전트만 사용, 개인 API 키·외부 AI 금지. 공개 Git clone 허용, **`git commit`·`git push` 금지.** 문제·결과 외부 반출 금지. 개인 파일 업로드 불가.
 
@@ -15,14 +15,14 @@
 |---|---|---|---|---|
 | 0~5 | 9:30 | 사람 | 준비 명령 5줄, 제출 방식 확인 | 과제 루트에 AGENTS·CONTRACT·DECISIONS |
 | 5~15 | 9:35 | 에이전트 P0 ‖ 사람 | 계약 추출 ‖ 런타임 확인, 웹 가능성 있으면 boilerplate 반입 | CONTRACT §1~§3, §5~§10 |
-| 15~25 | 9:45 | 에이전트 P1 ‖ 사람 | 데이터 계약 (데이터 있을 때) ‖ 계약 검토·확정(최대 10분), shape·카드 경로를 §10에, 부록 복사 | CONTRACT §4, DATA_QUALITY.md, `DECISIONS: 계약 확정` |
-| 25~90 | 9:55 | 에이전트 P2 | AC1 수직 흐름 + verify-fast | 첫 통과. 게이트: 웹·최적화 T+90(11:00), 예측 파일·ETL은 **T+45(10:15)**에 baseline 제출 파일 |
+| 15~25 | 9:45 | 에이전트 P1 ‖ 사람 | 데이터 계약 (데이터 있을 때) ‖ §10 경로 먼저 저장 → 계약 검토·확정(최대 10분, P1 중 CONTRACT 저장 금지), 카드 발췌 | CONTRACT §4, DATA_QUALITY.md, `DECISIONS: 계약 확정` |
+| 25~90 | 9:55 | 에이전트 P2 | AC1 수직 흐름 + verify_fast.sh | 첫 통과. 게이트: 웹·최적화 T+90(11:00), 예측 파일·ETL은 **T+45(10:15)**에 baseline 제출 파일 |
 | 90~점심 | 11:00 | 에이전트 P3 | AC2, AC3… | |
 | 점심 −5 | | 에이전트 P4 중단 | 체크포인트 | §0, DECISIONS 체크포인트 |
 | 점심 +0 | | 에이전트 P4 재개 | verify 확인 후 이어서 | |
 | ~T+255 | ~14:45 | 에이전트 P3 | 나머지 AC, 필수 AC 끝나면 품질 개선 1건 | |
 | 120, 200 | | 사람 | 중간 보고 요청 (P3 하단) | 범위 조정 결정 |
-| 255~285 | 14:45 | 에이전트 P5 | 제출 감사, `verify-full`, 깨끗한 재현 | §7 확정, 감사 기록 |
+| 255~285 | 14:45 | 에이전트 P5 | 제출 감사, `verify_full.sh`, 깨끗한 재현 | §7 확정, 감사 기록 |
 | 285~305 | 15:15 | 에이전트 P6 ‖ 사람 | 제출 문서 ‖ 서술형 메모 | SUBMISSION.md |
 | 305~330 | 15:35 | 사람 | 제출 (`checklists/submission.md`) | 제출 완료 확인 |
 
@@ -77,10 +77,14 @@ Terminal 3에서 `cd <과제 루트>/web && pnpm dev`, 내부 Browser에서 `/lo
 
 ## T+15~25 · 사람: 계약 확정 (최대 10분, P1과 병렬)
 
-P0 보고가 오면 데이터가 있을 때 P1을 바로 붙여 넣고(§4만 채우므로 검토와 충돌하지 않는다), 그동안 `prompts/P0_contract.md` 하단 체크를 한다. 끝나면:
-- §10에 `~/finals/shapes/<형태>.md`와(선택) `~/finals/domain/scenarios/S0n.md` 경로를 적는다. 데이터 파일이 있으면 `~/finals/domain/data_patterns.md`도 적는다(P1이 읽는다). shape 선택은 `README.md`의 판별표.
-- 부록 복사: 이름 규칙은 `~/finals/contract/addenda/README.md`의 명령 블록 하나가 기준이다(DATA_CONTRACT → `DATA_QUALITY.md`, RAG_EVAL → `EVAL_SET.md`, 나머지는 같은 이름). 빈칸은 P2가 채운다.
-- 웹 안에 계산이 있으면 §10에 주 shape(`web_fullstack`)와 계산 shape(`or_optimization` 또는 `data_analysis_ml`) 둘을 적는다. 최대 2장.
+P0 보고가 오면 **먼저 §10의 shape·data_patterns 경로 줄만 적고 저장**한다(아래 첫 항목). 그다음 데이터가 있을 때 P1을 붙여 넣는다. **P1이 도는 동안 CONTRACT.md를 저장하지 않는다.** 에이전트가 같은 파일의 §4를 쓰는 중이라 서로 덮어쓴다. 검토 메모는 `DECISIONS.md`나 종이에 적고, P1 보고가 온 뒤 한 번에 반영한다. 그동안 `prompts/P0_contract.md` 하단 체크를 한다. 끝나면:
+- §10에 `~/finals/shapes/<형태>.md` 경로를 적는다. 데이터 파일이 있으면 `~/finals/domain/data_patterns.md`도 적는다(P1이 읽는다). shape 선택은 `README.md`의 판별표.
+- 카드는 경로를 주지 않는다. 닮은 카드가 있으면(입력 형식과 산출물이 둘 다 같을 때만) 아래 명령으로 Baseline~함정 절만 뽑아 두고 §10 카드 발췌 줄에 `./CARD_REF.md`를 적는다. 고르기 전에 README와 카드의 차이 3개(입력 단위·산출물·채점)를 DECISIONS에 한 줄 적고, 하나라도 핵심이면 카드를 주지 않는다.
+  ```bash
+  { echo '> 카드 발췌. 숫자·상태명·컬럼명·도구명은 예시다. 과제 README와 다르면 README가 맞고, 차이는 CONTRACT §9에 A번호로 적는다.'; echo; sed -n '/^## Baseline/,/^## 화면/{/^## 화면/!p;}' ~/finals/domain/scenarios/S0n.md; } > ./CARD_REF.md
+  ```
+- 부록은 P2가 복사하고 채운다. §10 '붙인 부록' 줄의 파일명이 `~/finals/contract/addenda/README.md` 규칙(DATA_CONTRACT → `DATA_QUALITY.md`, RAG_EVAL → `EVAL_SET.md`, 나머지는 같은 이름)과 맞는지만 본다.
+- 주 shape 안에 다른 형태의 계산·검색이 있으면 §10에 계산 shape를 하나 더 적는다(어느 조합이든 가능. 예: `web_fullstack` + `or_optimization`, `web_fullstack` + `rag_agent`). 최대 2장. 어디에도 1:1로 맞지 않으면 `unknown` 하나만.
 - `DECISIONS.md`에 `HH:MM | 계약 | 확정 | shape=<이름>` 한 줄.
 - 보조 세션이 필요하면(shape 문서의 조건) Terminal 2에서 `prompts/specialists/` 프롬프트로 띄운다. 10분 뒤 결과 파일만 남기고 닫는다.
 
@@ -88,7 +92,7 @@ P0 보고가 오면 데이터가 있을 때 P1을 바로 붙여 넣고(§4만 �
 
 프롬프트 파일을 순서대로 쓴다. 사람이 할 일:
 - P2 첫 결과가 나오면 **직접 실행하거나 화면을 연다.** 에이전트 보고만 믿지 않는다. 예측 파일·ETL 과제는 T+45에 baseline 제출 파일이 있어야 한다. 없으면 범위를 줄인다.
-- T+120, T+200에 중간 보고를 요청하고, 시간이 부족하면 어떤 AC를 줄일지 결정해 CONTRACT §7·§8을 고치고 DECISIONS에 남긴다.
+- T+120, T+200에 중간 보고를 요청하고, **Terminal 2에서 `bash verify_fast.sh`를 직접 돌려** 보고와 대조한다(에이전트가 만든 검증을 에이전트 말로만 믿지 않는다). 다르면 §7을 사실대로 고치게 한다. 시간이 부족하면 어떤 AC를 줄일지 결정해 CONTRACT §7·§8을 고치고 DECISIONS에 남긴다.
 - 점심 5분 전 P4 중단, 복귀 후 P4 재개. 서버와 플랫폼 세션을 확인한다.
 - 접속이 끊기면 `prompts/P4_checkpoint.md` 하단과 `checklists/recovery.md`.
 
@@ -111,7 +115,7 @@ P5, P6 순서. 사람은 `checklists/grading_2h.md`로 대조하고 `checklists/
 | 새 모델 API만 500 (`reading 'create'`) | 스키마 변경 후 서버 미재시작. Ctrl+C 후 `pnpm dev` |
 | 로그인 후 계속 `/login` | `web/.env`에 `COOKIE_SAMESITE="none"`, `COOKIE_SECURE="true"` 후 재시작 |
 | AC를 "통과"로 표시했는데 명령이 없다 | "검증 명령 없이 상태를 바꾸지 마라. 명령을 적고 실행한 뒤 결과대로 표시해라." |
-| 에이전트가 AC마다 `pnpm build`를 돌려 느리다 | "AC마다는 verify-fast(검증기·curl·테스트)만. build는 verify-full로 P5에서." |
+| 에이전트가 AC마다 `pnpm build`를 돌려 느리다 | "AC마다는 verify_fast.sh(검증기·curl·테스트)만. build는 verify_full.sh로 P5에서." |
 | 에이전트가 §1~§8 본문을 고쳤다 | "CONTRACT 머리말의 수정 권한 규칙을 읽어라. 그 변경은 되돌리고 DECISIONS에 제안으로 적어라." |
 | 모델 capacity·API 오류, 접속 끊김 | `checklists/recovery.md`. 세션이 바뀌면 `prompts/P4_checkpoint.md` 재개 프롬프트 |
 | 과제 README가 커밋을 명시적으로 요구 | README 우선. 요구 범위에서만 커밋, push는 하지 않음, DECISIONS 기록 |

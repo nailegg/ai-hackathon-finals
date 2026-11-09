@@ -8,7 +8,7 @@
 | 40분 | `domain/glossary.md` 전공정·후공정·보전·물류 절 읽기 | 체크 문제 1~4 답할 수 있음 |
 | 30분 | `domain/kpi_formulas.md` | Yield·OEE·MTBF·tardiness 분모·분자 설명 가능 |
 | 20분 | `domain/data_patterns.md` | 8개 테이블의 조인 키와 1:N 함정 설명 가능 |
-| 30분 | 시나리오 카드 S01, S04, S07, S08 (가장 가능성 높은 OR+웹 조합) | 각 카드의 baseline·validator 한 줄 요약 |
+| 30분 | 시나리오 카드 S01, S04, S07, S08 (예선과 닮은 OR+웹 계열) + S02·S11은 Baseline 절만 | 각 카드의 baseline·validator 한 줄 요약. **예선이 OR+웹이었다는 사전 확률은 시험장에서 README를 읽을 때 버린다** |
 | 30분 | `RUNBOOK_330.md`를 처음부터 끝까지 읽고 프롬프트 P0~P6 훑기 | 시간표를 보지 않고 단계 순서를 말할 수 있음 |
 
 ## 11/10 (월)

@@ -1,6 +1,6 @@
 # 부록 (addenda)
 
-CONTRACT.md는 모든 형태에 공통인 코어다. 형태별 세부는 여기 부록을 **과제 루트에 복사**해 채운다. P0 결과(§10 형태)에 따라 1~2개만 쓴다. 보조 세션(prompts/specialists)이 채우는 파일도 같은 템플릿을 쓴다.
+CONTRACT.md는 모든 형태에 공통인 코어다. 형태별 세부는 여기 부록을 **과제 루트에 복사**해 채운다. 복사는 CONTRACT §10 '붙인 부록' 줄을 보고 에이전트가 P2 시작 시(DATA_CONTRACT는 P1에서) 아래 명령 블록의 해당 줄로 한다. 응시자는 파일명이 맞는지만 본다. P0 결과(§10 형태)에 따라 1~2개만 쓴다. 보조 세션(prompts/specialists)이 채우는 파일도 같은 템플릿을 쓴다.
 
 | 부록 | 언제 | 채우는 주체 | 과제 루트 파일명 |
 |---|---|---|---|
@@ -12,7 +12,7 @@ CONTRACT.md는 모든 형태에 공통인 코어다. 형태별 세부는 여기 
 | `ML_EVAL.md` | 예측·분류·이상탐지 모델 | 에이전트가 P2 시작 시 | `ML_EVAL.md` |
 | `REPAIR_MAP.md` | 기존 코드 수리 | 에이전트가 P2 시작 시(코드 수정 전) 또는 debug specialist | `REPAIR_MAP.md` |
 
-**복사와 이름 규칙 (런북 T+15에서 응시자가 실행, 이 표가 유일한 기준):**
+**복사와 이름 규칙 (에이전트가 P2 시작 시, DATA_CONTRACT는 P1에서, §10에 적힌 줄만 실행. 이 표가 유일한 기준):**
 ```bash
 cp ~/finals/contract/addenda/WEB.md ./WEB.md                 # 필요한 것만
 cp ~/finals/contract/addenda/RESULT_FILE.md ./RESULT_FILE.md

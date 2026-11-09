@@ -1,10 +1,10 @@
 # P1 · 데이터 계약
 
-**언제:** T+15~25. 제공 데이터가 있을 때. 계약 확정 직후.
-**사람:** `cp ~/finals/contract/addenda/DATA_CONTRACT.md ./DATA_QUALITY.md`를 먼저 해 둔다. 데이터가 여러 파일이고 조인이 결론을 바꿀 수 있으면 대신 Terminal 2에서 `prompts/specialists/specialist-data.md`를 띄우고 메인은 P2로 넘어간다.
+**언제:** T+15~25. 제공 데이터가 있을 때. P0 보고 직후, 응시자가 §10 경로 줄을 적어 저장한 뒤(확정 전이어도 된다. P1은 §4만 쓴다).
+**사람:** P1이 도는 동안 CONTRACT.md를 저장하지 않는다(§4를 에이전트가 쓰는 중). 데이터가 여러 파일이고 조인이 결론을 바꿀 수 있으면 대신 Terminal 2에서 `prompts/specialists/specialist-data.md`를 띄우고 메인은 P2로 넘어간다.
 
 ```text
-CONTRACT §4 데이터 계약을 채워라. 과제 루트 DATA_QUALITY.md 템플릿도 함께 채운다. §10에 ~/finals/domain/data_patterns.md 경로가 적혀 있으면 그 파일만 참고로 읽어라.
+CONTRACT §4 데이터 계약을 채워라. CONTRACT의 다른 절은 건드리지 마라. 과제 루트에 DATA_QUALITY.md가 없으면 `cp ~/finals/contract/addenda/DATA_CONTRACT.md ./DATA_QUALITY.md`로 만든 뒤 함께 채운다. §10에 ~/finals/domain/data_patterns.md 경로가 적혀 있으면 그 파일만 참고로 읽어라.
 1) 파일마다 인코딩(utf-8/utf-8-sig/cp949), 구분자, 행 수, 컬럼 수, 헤더를 확인한다. 한글 깨짐이 있으면 인코딩을 바꿔 다시 읽는다. 데이터 전체를 출력하지 말고 샘플 5행과 통계만 본다.
 2) 컬럼마다 타입, 결측 비율, 고유값 수, 범위 또는 상위 값, 단위를 적는다. 의미가 README에 없으면 §9에 가정으로 등록한다.
 3) 파일 간 키를 찾아 카디널리티(1:1/1:N/N:M)와 매칭률을 계산하고, 조인 후 행 수가 기대와 다르면 적는다. 1:N 조인 뒤 합계가 부풀 수 있는 컬럼을 표시한다.

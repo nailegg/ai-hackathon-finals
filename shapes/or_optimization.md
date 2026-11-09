@@ -9,7 +9,6 @@
 - 입력이 작업·자원·시간창·거리 행렬 형태의 CSV/JSON
 - "기존 계획보다 개선", "baseline 대비" 또는 비교용 스케줄 파일 제공
 - 채점이 "제약 위반 0건" 또는 수치 지표(지연, 거리, makespan)로 설명됨
-- 지난 예선 패턴: 역할 있는 웹앱 + 이 계산
 
 ## 산출물 형태
 - 채점자가 먼저 볼 것: 결과 파일(배정표·스케줄 JSON/CSV) 또는 결과 화면, 그리고 `constraint_violations: []`와 KPI 비교표
@@ -70,4 +69,4 @@ S04 Fab 스케줄링, S07 설비 보전 일정·부품 재고, S08 OHT/AMR 반�
 - validator 없는 점수 튜닝
 
 ## 보조 세션 (선택)
-목적함수가 모호하거나 hard constraint가 3개 이상이라 정식화가 구현을 막을 때만. 사람이 Terminal 2에서 `prompts/specialists/specialist-or.md`로 띄운다. 동시 1개, 10분, 읽기 전용, 결과는 과제 루트 `OR_SPEC.md` 한 파일. Main은 그동안 파서·validator 골격을 만든다.
+목적함수가 모호하거나 hard constraint가 3개 이상이라 정식화가 구현을 막을 때만. 사람이 Terminal 2에서 `prompts/specialists/specialist-or.md`로 띄운다. 동시 1개, 10분, 읽기 전용, 결과는 과제 루트 `OR_SPEC.md` 한 파일. Main은 그동안 파서·validator 골격을 만들고 `OR_SPEC.md`는 건드리지 않는다(§0 보조 결과 파일 칸이 "반영 대기"인 동안).
