@@ -70,6 +70,7 @@
 - 출력:
 - Hard constraints (각각 검증 가능해야 함):
 - Soft objectives (방향·단위):
+- 지표 정의 (응시자가 적음. 지표마다 분자 / 분모 / 집계 단위 / 분모 0 처리. README 정의가 있으면 그대로, 없으면 출처를 §9에):
 - Baseline (20분 안에 유효한 결과):
 - 독립 검증 함수 (계산 코드와 분리):
 - 부록: `OR_SPEC.md` / `ML_EVAL.md` / 해당 없음
@@ -100,8 +101,7 @@
 - 주 shape (1개, 산출물을 결정하는 쪽): `~/finals/shapes/<이름>.md`
 - 계산 shape (0~1개, 주 shape 안에 다른 형태의 계산·검색·추출이 있을 때. 주 shape가 unknown이면 비움): `~/finals/shapes/<이름>.md`
 - 참고 카드 발췌 (0~1개, 응시자가 카드의 Baseline·독립 검증·KPI·함정 절만 뽑아 둔 과제 루트 파일. 값은 예시이며 README가 우선): `./CARD_REF.md`
-- 데이터 패턴 (데이터가 있으면): `~/finals/domain/data_patterns.md`
-- KPI 정의 (지표 계산이 있으면): `~/finals/domain/kpi_formulas.md`
+- 데이터 체크리스트 (데이터가 있으면): `~/finals/domain/data_checklist.md`
 - 참고 snippets (shape가 이름을 댄 것만, 복사해서 사용): `~/finals/snippets/py/<이름>.py` 또는 `~/finals/snippets/ts/<이름>.ts`
 - 붙인 부록 (과제 루트 파일명): 
 - Web Boilerplate 사용: 예/아니오 — 판정 근거 (브라우저 확인 웹 / 로그인·역할·저장 중 둘 이상 / 스택 미지정 / 수리 아님 / node 20+):

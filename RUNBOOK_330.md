@@ -161,7 +161,8 @@ P0 보고가 오면 아래 순서대로 한다. **순서가 중요하다.** 특�
 P0 보고의 §10 "형태" 항목을 보고, `~/finals/README.md`의 판별표에서 shape를 고른다. `CONTRACT.md` §10의 다음 줄을 채운다.
 - 주 shape: `~/finals/shapes/<이름>.md`
 - 계산 shape(있을 때만): 주 shape 안에 다른 형태의 계산·검색이 있으면 하나 더. 예: `web_fullstack` + `or_optimization`, `web_fullstack` + `rag_agent`. 최대 2장. 어느 형태에도 1:1로 맞지 않으면 `unknown` 하나만 적고 계산 shape는 비운다.
-- 데이터 패턴(데이터 파일이 있을 때): `~/finals/domain/data_patterns.md`. P1이 읽는다.
+- 데이터 체크리스트(데이터 파일이 있을 때): `~/finals/domain/data_checklist.md`. P1이 읽는다. 도메인 지식 없이 검사 순서와 함정만 있어 어떤 데이터에도 해가 없다.
+- KPI는 경로를 주지 않는다. README가 지표를 요구하면 `~/finals/domain/kpi_formulas.md`에서 그 행을 찾아 §6 "지표 정의" 줄에 분자·분모·집계 단위를 직접 옮겨 적는다. 이유: 카탈로그를 통째로 받은 에이전트는 요구에 없는 지표까지 만든다. `data_patterns.md`도 사람용이다. P1 보고를 검토할 때 대조만 한다.
 저장한다.
 
 **2. 데이터가 있으면 P1을 붙여 넣는다.**

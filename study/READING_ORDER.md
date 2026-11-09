@@ -16,8 +16,9 @@
 | `prompts/specialists/` | 보조 세션용 프롬프트 6종(or, data, rag, debug, research, rubric). 읽기 전용, 결과 파일 1개, 10분 | 사람이 복사 | shape 문서의 "보조 세션" 조건을 만족할 때만 |
 | `shapes/` | 과제 **형태**별 작업 명세 8장. 판별 신호, 산출물, 330분 단계, Baseline, 독립 검증, 지표, 함정, 보조 세션 조건 | 에이전트(§10 경로) | 주 shape 1장 + 계산 shape 0~1장 |
 | `domain/glossary.md` | 반도체 용어집 8절(전공정, 후공정, 보전, 물류, KPI, 안전, AX 용어, 자가 점검) | 사람 | 에이전트에게는 필요할 때만 |
-| `domain/kpi_formulas.md` | KPI 정의식·분모분자·함정 7절(품질, 설비, 흐름, 스케줄링, 분류, 회귀, 이상탐지) | 사람+에이전트 | §6·§7 지표를 적을 때 §10 경로로 |
-| `domain/data_patterns.md` | 반도체 데이터 테이블 8종의 전형적 컬럼·키·함정, 조인 지도 | 사람+에이전트 | 데이터가 있으면 P1이 읽음 |
+| `domain/kpi_formulas.md` | KPI 정의식·분모분자·함정 7절(품질, 설비, 흐름, 스케줄링, 분류, 회귀, 이상탐지) | 사람 | README가 요구하는 지표의 행만 §6 "지표 정의" 줄에 옮겨 적는다. 에이전트에게 경로를 주지 않음 |
+| `domain/data_patterns.md` | 반도체 데이터 테이블 8종의 전형적 컬럼·키·함정, 조인 지도 | 사람 | P1 보고를 검토할 때 대조. 에이전트에게 주지 않음 |
+| `domain/data_checklist.md` | 데이터 검사 순서 9단계와 데이터 종류 무관 함정 9개 | 에이전트 | 데이터가 있으면 §10 경로로 P1이 읽음 |
 | `domain/scenarios/S01~S11` | 출제 시나리오 **가설** 카드 11장. 공개 신호 → 가상 출제문 → 예상 데이터 → Baseline → 독립 검증 → KPI → 함정 → 화면 → 우선순위 | 사람 | 원본은 에이전트에게 주지 않음. Baseline~함정만 `CARD_REF.md`로 발췌 |
 | `snippets/py`, `snippets/ts` | 의존성 없는 함수 7종 × 2언어. 각 파일이 자가 테스트 | 에이전트가 복사 | shape가 이름을 댄 것만 |
 | `checklists/` | `grading_2h.md`(2시간 심사 가설 A~E), `submission.md`(T+305/320), `recovery.md`(끊김·모델 오류) | 사람 | P5·P6·장애 때 |
@@ -39,7 +40,7 @@
 ### 2단계 · 도메인 기초 (90분) — README를 읽을 때 단어가 걸리지 않게
 5. `domain/glossary.md` 1절 전공정, 3절 설비 보전, 5절 KPI, 7절 AX 용어. 2·4·6절은 제목과 굵은 단어만.
 6. `domain/kpi_formulas.md` 공통 함정 표 + 1절 품질 + 2절 설비 + 4절 스케줄링 + 5절 분류. 3·6·7절은 훑기.
-7. `domain/data_patterns.md` "P1에서 보는 순서"와 "조인 지도". 테이블 8종은 컬럼 이름만 눈에 익힌다.
+7. `domain/data_checklist.md` 전체(에이전트가 받는 유일한 데이터 문서가 무엇인지 안다) → `domain/data_patterns.md` "조인 지도". 테이블 8종은 컬럼 이름만 눈에 익힌다.
 - 확인: `glossary.md` 8절 자가 점검 5문항, `study/check_questions.md` 1~7번.
 
 ### 3단계 · 형태와 카드 (75분) — 과제가 무엇이든 "어디로 갈지" 10분 안에 정하게

@@ -22,7 +22,7 @@
 **사람 검토 체크 (3분):**
 - §5 역할표가 README와 맞는가. §7 AC1이 정말 가장 중요한 여정인가. §8에 필요한 기능이 들어가 있지 않은가.
 - §3 주 가설에 동의하는가. 자동 지표라면 §2 출력 형식이 sample과 정확히 같은가.
-- §10 형태와 shape를 보고 `~/finals/shapes/<형태>.md` 경로를 §10에 직접 적는다. 데이터가 있으면 `~/finals/domain/data_patterns.md`도 적는다.
+- §10 형태와 shape를 보고 `~/finals/shapes/<형태>.md` 경로를 §10에 직접 적는다. 데이터가 있으면 `~/finals/domain/data_checklist.md`도 적는다. README가 지표를 요구하면 `~/finals/domain/kpi_formulas.md`에서 그 지표의 행을 찾아 §6 "지표 정의" 줄에 분자·분모·집계 단위를 옮겨 적는다. KPI 문서와 `data_patterns.md`의 경로는 에이전트에게 주지 않는다.
 - 카드를 쓸지 정한다: README와 후보 카드의 차이 3개(입력 단위·산출물·채점 방식)를 DECISIONS에 한 줄로 적는다. 셋 중 하나라도 핵심이면 카드를 주지 않는다. 쓴다면 RUNBOOK T+15~25의 명령으로 `CARD_REF.md`를 만들고 §10에 적는다. 카드 원본 경로는 적지 않는다.
 - §10 '붙인 부록' 줄의 파일명이 `~/finals/contract/addenda/README.md`의 이름 규칙과 맞는지 본다. 복사는 P2가 한다.
 - 주 shape 안에 다른 형태의 계산·검색이 있으면 계산 shape를 하나 더 §10에 적는다(어느 조합이든, 최대 2장).
