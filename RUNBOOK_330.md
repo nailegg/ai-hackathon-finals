@@ -27,6 +27,7 @@
 | 말 | 뜻 |
 |---|---|
 | **과제 루트** | 플랫폼이 준 과제 폴더. README와 데이터가 있는 곳. 에이전트는 여기서 시작한다 |
+| **`TASK_SPEC.md`** | 과제 루트에 `README.md`가 없을 때 사람이 명세를 붙여 넣는 파일(3절). 시험 중 추가 요구도 끝에 `## 추가 (HH:MM)`로 붙인다(6절). 이 런북과 프롬프트의 "README"는 그 경우 이 파일을 뜻한다 |
 | **`~/finals`** | 이 저장소를 clone한 곳. 과제 루트 **밖**이다. 제출물에 섞이지 않는다 |
 | **CONTRACT, §n** | 과제 루트의 `CONTRACT.md`와 그 절 번호. §0 상태판, §4 데이터 계약, §7 수용 기준, §9 가정, §10 구현 기반 결정이 자주 나온다 |
 | **AC** | 수용 기준(Acceptance Criteria). §7에 5~8개. "채점자가 명령이나 화면으로 확인할 수 있는 문장" 하나가 AC 하나다. AC1이 가장 중요한 사용자 여정이다 |
@@ -57,7 +58,7 @@
 
 | T+ | 시각 | 누가 | 할 일 | 끝났을 때 있어야 할 것 |
 |---|---|---|---|---|
-| 0~5 | 9:30 | 사람 | 준비 명령(3절), 제출 방식 확인 | 과제 루트에 `AGENTS.md`·`CONTRACT.md`·`DECISIONS.md`, `/tmp/orig.sha` |
+| 0~5 | 9:30 | 사람 | 준비 명령(3절), 제출 방식 확인. README가 없으면 `TASK_SPEC.md` | 과제 루트에 `AGENTS.md`·`CONTRACT.md`·`DECISIONS.md`, `/tmp/orig.sha` |
 | 5~15 | 9:35 | 에이전트 P0 ‖ 사람 | 계약 초안 ‖ 런타임 확인, 웹 가능성 있으면 boilerplate 반입(4절) | CONTRACT §1~§3, §5~§10 초안 |
 | 15~25 | 9:45 | 에이전트 P1 ‖ 사람 | 데이터 계약(데이터 있을 때) ‖ 계약 검토·확정(5절, 최대 10분) | CONTRACT §4, `DATA_QUALITY.md`, `DECISIONS`에 "계약 확정" |
 | 25~90 | 9:55 | 에이전트 P2 | AC1 수직 흐름 + `verify_fast.sh` 작성 | AC1 첫 통과. **게이트**: 웹·최적화는 T+90(11:00), 예측 파일·ETL은 T+45(10:15)에 baseline 제출 파일 |
@@ -127,14 +128,15 @@ date +%H:%M   # CONTRACT §0 첫 줄에 시작/점심/종료 시각을 적는다
 - `AGENTS.md`는 세션 시작 때 읽히므로, **복사를 끝낸 뒤** Terminal 1에서 에이전트를 시작한다.
 - **제출 방식을 지금 확인한다.** 폴더 전체 업로드인지, 특정 파일만인지, 용량 제한이 있는지. 플랫폼의 제출 화면이 어디 있는지 찾아 둔다. 마지막 25분에 찾기 시작하면 늦다.
 - 홈(`~`)에 쓸 수 없으면 `/tmp/finals`에 clone하고 이후 경로를 그에 맞춰 읽는다.
-- **과제 루트에 `README.md`가 없으면**(명세가 PDF·플랫폼 화면·문서 여러 개·구두 설명이면) 사람이 명세 전문을 과제 루트 `TASK_SPEC.md`에 붙여 넣는다. PDF는 `pdftotext 파일.pdf TASK_SPEC.md`가 되면 그것을, 안 되면 에이전트에게 "제공 PDF를 텍스트로 뽑아 TASK_SPEC.md에 저장만 해라"를 시킨 뒤 사람이 읽고 빠진 부분을 채운다. 문서가 여러 개면 한 파일에 "## 출처: 파일명" 절로 이어 붙인다. 이후 모든 문서의 "README"는 이 파일을 뜻한다. P0 프롬프트가 이 경우를 알고 있으므로 따로 고칠 말은 없다. `TASK_SPEC.md`도 `/tmp/orig.sha`에 넣지 않도록 `find` 줄에 `-not -name 'TASK_SPEC.md'`를 더한다.
-- **에이전트가 `AGENTS.md`를 자동으로 읽는지 확인한다.** 세션을 시작하고 "AGENTS.md를 읽었나? 용어표의 '수직 흐름' 뜻을 한 줄로 말해라"라고 묻는다. 모르면 그 에이전트는 다른 파일명을 읽는 것이다(Claude Code는 `CLAUDE.md`, Gemini CLI는 `GEMINI.md`). `cp AGENTS.md CLAUDE.md`(또는 그 에이전트의 파일명)로 사본을 만들고 DECISIONS에 한 줄 적는다. P0~P4 프롬프트 첫 줄이 AGENTS.md를 읽으라고 하므로 사본이 없어도 규칙은 전달되지만, 재접속마다 다시 읽히려면 사본이 안전하다.
+- **과제 루트에 `README.md`가 없으면**(명세가 PDF, 플랫폼 화면, 문서 여러 개, 구두 설명) 명세 전문을 과제 루트 `TASK_SPEC.md`에 넣는다. 화면 글은 복사해 붙이고, PDF는 `pdftotext 파일.pdf TASK_SPEC.md`가 되면 그것을, 안 되면 에이전트 세션을 시작한 뒤 "제공 PDF를 텍스트로 뽑아 TASK_SPEC.md에 저장만 해라"를 먼저 시키고 사람이 읽어 빠진 부분을 채운다. 문서가 여러 개면 한 파일에 `## 출처: 파일명` 절로 이어 붙인다. 이후 모든 문서의 "README"는 이 파일을 뜻하고, P0 프롬프트가 이 경우를 알고 있어 따로 할 말은 없다. 위 `find` 줄은 이 파일을 해시에서 이미 뺀다.
 
 ---
 
 ## 4. T+5~15 · 에이전트 P0 ‖ 사람 병렬 작업
 
-**Terminal 1**에서 에이전트를 시작하고 `~/finals/prompts/P0_contract.md`의 코드 블록을 붙여 넣는다. P0는 AGENTS.md와 과제 README(없으면 `TASK_SPEC.md`)만 읽고 `CONTRACT.md` 초안을 쓴다(코드 금지, §4 제외). 약 10분 걸린다.
+**Terminal 1**에서 에이전트를 시작한다. P0를 붙이기 전에 한 번 묻는다. "AGENTS.md를 읽었나? 용어표의 '수직 흐름' 뜻을 한 줄로 말해라." 답하면 넘어간다. 모르면 그 에이전트는 다른 파일명을 읽는 것이다(Claude Code는 `CLAUDE.md`, Gemini CLI는 `GEMINI.md`). `cp AGENTS.md <그 파일명>`으로 사본을 두고 `DECISIONS.md`에 `HH:MM | 결정 | AGENTS.md 사본 <파일명> (자동 로드 안 됨) |` 한 줄. P0~P4 프롬프트 첫 줄이 어차피 AGENTS.md를 읽으라고 하므로 사본이 없어도 규칙은 전달되지만, 재접속 뒤에도 읽히려면 사본이 안전하다. 1분 넘게 쓰지 않는다.
+
+그다음 `~/finals/prompts/P0_contract.md`의 코드 블록을 붙여 넣는다. P0는 AGENTS.md와 과제 README(없으면 `TASK_SPEC.md`)만 읽고 `CONTRACT.md` 초안을 쓴다(코드 금지, §4 제외). 약 10분 걸린다.
 
 그동안 사람은 **Terminal 2**에서 다음 둘 중 하나를 한다.
 
@@ -248,5 +250,5 @@ shape 문서의 "보조 세션" 절에 조건이 있다(예: 최적화에서 목
 | 모델 capacity·API 오류, 접속 끊김 | `~/finals/checklists/recovery.md`. 세션이 바뀌면 `~/finals/prompts/P4_checkpoint.md`의 재개 프롬프트 |
 | 시험 중 요구사항이 추가·변경됨 | 코드를 멈춘다. 원문을 `TASK_SPEC.md` 끝에 `## 추가 (HH:MM)`로 붙이고 `P3_next_ac.md`의 "요구사항 추가·변경" 프롬프트. 계약 확정 뒤에만 P3 재개 |
 | 과제 루트에 README.md가 없다 | 명세를 `TASK_SPEC.md`에 붙여 넣는다(3절). P0 이후 모든 "README"는 그 파일이다 |
-| 에이전트가 AGENTS.md 규칙을 모른다(용어를 못 댄다) | `cp AGENTS.md CLAUDE.md`(그 에이전트의 규칙 파일명)로 사본을 두고 "AGENTS.md를 읽어라"고 말한다(3절) |
+| 에이전트가 AGENTS.md 규칙을 모른다(용어를 못 댄다) | `cp AGENTS.md CLAUDE.md`(그 에이전트의 규칙 파일명)로 사본을 두고 "AGENTS.md를 읽어라"고 말한다(4절) |
 | 과제 README가 커밋을 명시적으로 요구 | README 우선. 요구 범위에서만 커밋하고 push는 하지 않는다. DECISIONS에 기록 |
