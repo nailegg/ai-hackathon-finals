@@ -1,6 +1,7 @@
 /**
  * greedy_assign: 항상 feasible한 baseline 두 가지.
  * (a) greedySchedule: 우선순위·납기 순으로 가장 빨리 비는 적격 설비에 배치(정비 구간 회피)
+ *     priority 는 클수록 먼저(가중치)다. 데이터가 1=최우선 방식이면 부호를 바꿔 넣는다.
  * (b) greedyCapacityAssign: 수요 있는 항목을 용량 남은 bin에 비용 최소/여유 최대 순 배정.
  *     cost 를 주면 표에 없는 (item, bin) 쌍은 금지로 보고 배정하지 않는다.
  * 사용 예:

@@ -22,4 +22,4 @@ cp ~/finals/contract/addenda/REPAIR_MAP.md ./REPAIR_MAP.md
 cp ~/finals/contract/addenda/DATA_CONTRACT.md ./DATA_QUALITY.md   # 이름이 바뀐다
 cp ~/finals/contract/addenda/RAG_EVAL.md ./EVAL_SET.md            # 이름이 바뀐다
 ```
-빈 템플릿은 P2 프롬프트 1단계에서 에이전트가 채운다. 보조 세션이 채우는 경우는 그 파일을 읽기만 한다.
+빈 템플릿은 P2 프롬프트 0)단계에서 에이전트가 채운다. 보조 세션이 채우는 경우는 그 파일을 읽기만 한다.

@@ -1,7 +1,7 @@
 # P0 · 계약 추출 (코드 금지)
 
 **언제:** T+5~15. `AGENTS.md`, `CONTRACT.md`, `DECISIONS.md`를 과제 루트에 복사한 **뒤** 메인 세션을 시작하고 붙여 넣는다.
-**사람:** 이 프롬프트가 도는 동안 Terminal 2에서 런타임 확인과(웹 가능성이 있으면) boilerplate 반입을 한다. 끝나면 2~3분 검토 후 "확정"이라고 답하고 `DECISIONS.md`에 `HH:MM | 계약 | 확정 | shape=<이름>` 한 줄.
+**사람:** 이 프롬프트가 도는 동안 Terminal 2에서 런타임 확인과(웹 가능성이 있으면) boilerplate 반입을 한다. 끝나면 `RUNBOOK_330.md` 5절의 1~7번을 순서대로 따른다.
 
 ```text
 먼저 과제 루트의 AGENTS.md를 읽어라(규칙과 용어). 그다음 과제 README.md와 제공 파일을 읽고 CONTRACT.md를 채워라. README.md가 없고 TASK_SPEC.md가 있으면 그 파일이 과제 명세이며, 아래의 "README"는 모두 TASK_SPEC.md를 뜻한다. 데이터 파일은 헤더·행 수·샘플 5행만 본다(상세 프로파일은 다음 단계). 코드와 다른 파일은 만들지 마라. web/ 디렉터리나 ~/finals/ 아래는 아직 보지 마라(맨 마지막 단계의 카드 색인 한 파일만 예외).

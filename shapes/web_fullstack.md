@@ -12,9 +12,9 @@
 - 스택 지정이 없거나 "자유"라고 적힘 → boilerplate 후보. 특정 스택·스타터가 지정되면 아래 "스택 지정" 규칙
 
 ## 산출물 형태
-- 채점자가 먼저 볼 것: `README`(또는 SUBMISSION.md) 상단의 서버 실행 명령과 역할별 테스트 계정, 그리고 첫 화면
+- 채점자가 먼저 볼 것: 제출 문서(`SUBMISSION.md`) 상단의 서버 실행 명령과 역할별 테스트 계정, 그리고 첫 화면
 - 실행 중인 서버(`0.0.0.0:3000`), 시드된 DB, 역할별 로그인 → 핵심 여정 1개 → 결과 화면
-- 검증 명령: `cd web && pnpm build && bash scripts/smoke.sh` (boilerplate) 또는 지정 스택의 빌드·테스트 + curl 체크
+- 검증 명령: AC마다 도는 `verify_fast.sh`에는 curl 체크와 테스트만 넣는다. `cd web && pnpm build`와 `bash scripts/smoke.sh`(boilerplate), 지정 스택이면 그 스택의 빌드는 `verify_full.sh`에만 넣는다
 
 ## 붙일 부록 (과제 루트 파일명. §10 '붙인 부록' 줄에 이 이름으로 적는다)
 - `WEB.md` (역할표, 라우트·API 목록, 접근 정책, 테스트 계정)
@@ -23,7 +23,7 @@
 ## 330분 단계
 | 구간 | 이 형태에서 할 일 |
 |---|---|
-| T+0~15 계약(P0) | §5 역할표를 README 근거로 채움. boilerplate 사용 판정을 §10에 적음(아래 조건). 사람은 병렬로 `web/` 반입 |
+| T+5~15 계약(P0) | §5 역할표를 README 근거로 채움. boilerplate 사용 판정을 §10에 적음(아래 조건). 사람은 병렬로 `web/` 반입 |
 | T+15~25 데이터(P1) | 적재할 파일의 스키마·키·인코딩을 §4에. 시드가 파일을 읽도록 설계 |
 | T+25~90 AC1(P2) | 로그인 → 권한 검사 API → DB → 결과 화면의 수직 흐름 1개. placeholder 교체·삭제 시작 |
 | T+90~점심 / 점심후~T+255 (P3, P4) | AC 하나씩. 점심 직전 P4로 §0 갱신·서버 상태 기록. 계산 AC는 baseline + 독립 검증 함수 동시 작성 |
@@ -34,6 +34,8 @@
 ## boilerplate 사용 조건과 반입
 다음을 **모두** 만족할 때만 §10에 "boilerplate 사용: 예":
 브라우저로 확인하는 웹 / 로그인·역할·저장 중 둘 이상 필요 / 언어·프레임워크·스타터 지정 없음 / 기존 코드 수리 아님 / node 20 이상.
+
+반입은 응시자가 P0와 병렬로 이미 한다. `web/`이 있으면 아래를 다시 실행하지 않는다. §10이 "예"인데 `web/`이 없을 때만 실행한다.
 ```bash
 cd <과제 루트>
 git clone --depth 1 https://github.com/nailegg/web_boilerplate.git web   # 대상 이름 web 필수
@@ -41,7 +43,7 @@ bash web/scripts/exam-init.sh --install                                  # 정�
 ```
 반입 후 기반 코드 안내는 `web/BOILERPLATE.md`만 읽는다. 설치가 5분 넘게 막히면 `rm -rf web` 후 아래 "스택 지정" 경로로 간다.
 
-**스택 지정 또는 로그인·저장 없는 단순 화면:** boilerplate를 반입하지 않는다. 로그인이 필요하면 응시자가 `/tmp/ref_web`에 참고 사본을 clone한다. 에이전트는 거기서 `lib/auth/`·`lib/http.ts` 패턴(해시 비밀번호, DB 세션, HttpOnly 쿠키, 서버측 역할 검사, 401/403 구분)만 지정 스택으로 이식한다. 다른 파일은 보지 않는다.
+**스택 지정 또는 로그인·저장 없는 단순 화면:** boilerplate를 반입하지 않는다. 로그인이 필요하고 `/tmp/ref_web`이 없으면 `git clone --depth 1 https://github.com/nailegg/web_boilerplate.git /tmp/ref_web`으로 참고 사본을 받는다(과제 루트 밖이고 clone은 금지된 git 쓰기 명령이 아니다). 거기서 `lib/auth/`·`lib/http.ts` 패턴(해시 비밀번호, DB 세션, HttpOnly 쿠키, 서버측 역할 검사, 401/403 구분)만 지정 스택으로 이식한다. 다른 파일은 보지 않는다.
 
 ## Baseline
 - 역할 2개(관리자/사용자), 리소스 1개의 목록·생성 화면, 서버측 권한 검사, 파일 읽는 시드. 미관은 뒤로
@@ -74,12 +76,12 @@ bash web/scripts/exam-init.sh --install                                  # 정�
 - `group_compare`: 대시보드에 집단 비교 표가 필요할 때
 
 ## 참고 시나리오 카드
-§10에 `./CARD_REF.md`가 적혀 있을 때만 그 파일을 읽는다. 카드 원본은 읽지 않는다. (응시자용 메모, 닮은 카드: S10 안전·작업허가 승인 워크플로, S07 설비 보전 일정·부품 재고, S02 현장 지식 에이전트(승인 흐름), S04 Fab 스케줄링(화면이 요구될 때))
+과제 루트에 `CARD_REF.md`가 있을 때만 그 파일을 읽는다. 카드 원본은 읽지 않는다.
 
 ## 만들지 않을 것
 - 요구되지 않은 Auth·역할·DB, 실시간 알림, 파일 업로드 UI, 디자인 시스템
 - 브라우저 E2E(반입 시 삭제됨). 검증은 smoke와 curl로
 - 여러 서버, 여러 세션으로 나눈 프론트/백 구현
 
-## 보조 세션 (선택)
+## 보조 세션 (응시자용, 메인 세션은 띄우지 않는다)
 이 형태는 분할하지 않는다. 계산 정식화가 막히면 `or_optimization.md`의 규칙대로 OR 보조 세션 1개만(사람이 띄움, 동시 1개, 10분, 결과는 `OR_SPEC.md` 한 파일, `prompts/specialists/specialist-or.md`).

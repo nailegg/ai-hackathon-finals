@@ -1,6 +1,7 @@
 """greedy_assign: 항상 feasible한 baseline 두 가지.
 
 용도: (a) list scheduling greedy: 작업을 우선순위·납기 순으로 가장 빨리 비는 적격 설비에 배치
+          priority 는 **클수록 먼저**(가중치)다. 데이터가 1=최우선 방식이면 부호를 바꿔 넣는다.
       (b) 용량 제약 배정: 수요가 있는 항목을 용량이 남은 bin에 비용 최소/가까운 순으로 배정
 입력 (a): validate_schedule 과 같은 problem 형식. 출력: schedule 리스트
 입력 (b): items=[{"id","demand"}], bins=[{"id","capacity"}], cost[item_id][bin_id] (선택)

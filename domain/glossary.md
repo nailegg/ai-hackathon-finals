@@ -95,7 +95,7 @@
 | BM (Breakdown Maintenance) | 고장 난 뒤 하는 수리. 계획에 없던 다운타임 | `event_type=BM`, `fail_code`, `down_start`, `down_end` |
 | CM (Corrective Maintenance) | 이상 징후를 보고 고장 전에 손보는 정비 | `event_type=CM` |
 | PdM (Predictive) | 센서·이력으로 고장을 예측해 미리 하는 정비. AX의 핵심 영역 | 예측 점수 `risk_score` |
-| MTBF | 고장과 고장 사이의 평균 가동 시간. 클수록 좋다 | BM 이벤트 간격의 평균 |
+| MTBF | 고장과 고장 사이의 평균 가동 시간. 클수록 좋다 | 고장 종료(down_end)에서 다음 고장 시작(down_start)까지 간격의 평균 |
 | MTTR | 고장 한 번당 평균 수리 시간. 작을수록 좋다 | `down_end - down_start`의 평균 |
 | 시간가동률 (Availability) | 전체 시간 중 장비를 쓸 수 있었던 비율. "실제로 일한 비율"인 Utilization과 다르다 | `(total - downtime)/total`. Utilization은 `busy_time/available_time` |
 | Work order | 정비 작업 지시서. 누가, 어느 장비를, 어떤 부품으로, 언제 | `wo_id`, `assigned_to`, `status`, `approved_by` |

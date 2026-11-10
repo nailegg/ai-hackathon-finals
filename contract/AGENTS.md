@@ -38,7 +38,7 @@
 | 부록 / 부록 템플릿 | 부록은 과제 루트의 `WEB.md`, `RESULT_FILE.md`, `OR_SPEC.md`, `DATA_QUALITY.md`, `EVAL_SET.md`, `ML_EVAL.md`, `REPAIR_MAP.md`. 부록 템플릿은 그 원본 `~/finals/contract/addenda/*.md`. `CONTRACT.md` §10 "붙인 부록" 줄에 적힌 것만 쓴다 |
 | CARD_REF.md | 응시자가 시나리오 카드에서 Baseline·독립 검증·KPI·함정 절만 뽑아 과제 루트에 둔 발췌. 값은 예시이며 과제 README가 우선. 없을 수 있다. 어느 카드인지는 P0가 `CONTRACT.md` §10 "참고 카드 제안" 줄에 제안하고 응시자가 받아들일 때만 만들어진다 |
 | 산출물 | 채점자가 확인하는 결과(웹 화면, 결과 파일, 보고서). `CONTRACT.md` §2에 정한다. "결과 파일 과제"는 산출물이 파일인 과제를 뜻한다 |
-| T+n | 시작 시각에서 n분 뒤. 시작 시각은 `CONTRACT.md` §0 첫 줄에 응시자가 적는다. 문서의 T+n은 그 시각 기준이며, 기록에는 항상 실제 시계(HH:MM)를 쓴다 |
+| T+n | 점심 시간을 뺀 개발 경과 분. 시작·점심·종료 시각은 `CONTRACT.md` §0 첫 줄에 응시자가 적는다. 문서의 T+n은 그 시각 기준이며, 기록에는 항상 실제 시계(HH:MM)를 쓴다 |
 
 ## 디렉터리 지도
 
@@ -46,20 +46,20 @@
 |---|---|---|
 | `README.md`, 제공 데이터·문서 | 과제 원본 | **수정·이동·삭제 금지**. 읽기만 한다. (코드 수리 과제의 제공 소스 코드는 예외: 수정 대상) |
 | `TASK_SPEC.md` | 과제 명세 사본 (README.md가 없을 때만 응시자가 만듦) | 과제 README와 같은 자격. 읽기만 한다. 명세가 바뀌면 응시자가 끝에 "## 추가 (HH:MM)" 절을 붙인다 |
-| `CONTRACT.md` | 요구사항 계약·운영판 | 구현 범위의 기준. 수정 권한은 CONTRACT.md 머리말의 규칙 하나를 따른다(초안 단계 후에는 §0, §4, §7 상태·verify, §9 추가, §10 런타임·검증·부록 줄만) |
+| `CONTRACT.md` | 요구사항 계약·운영판 | 구현 범위의 기준. 수정 권한은 CONTRACT.md 머리말의 규칙 하나를 따른다(초안 단계 후에는 §0, §4, §7 상태·verify, 응시자가 요구사항 추가를 지시했을 때의 §7 행 추가, §9 추가, §10 런타임·검증·부록 줄만) |
 | `DECISIONS.md` | 결정·진행 기록 | append-only. 가정·선택·검증·완료한 AC를 한 줄씩 추가 |
-| `WEB.md`, `RESULT_FILE.md`, `OR_SPEC.md`, `DATA_QUALITY.md`, `EVAL_SET.md`, `ML_EVAL.md`, `REPAIR_MAP.md` | 부록 | `CONTRACT.md` §10 '붙인 부록' 줄에 적힌 것만 P2 시작 시 `~/finals/contract/addenda/README.md`의 명령으로 복사하고 빈칸을 채워 보고한다. `CONTRACT.md` §0 '보조 세션 출력 파일'이 "반영 대기"인 파일은 보조 세션이 쓰는 중이므로 건드리지 않는다. 보조 세션이 채운 파일은 읽고 반영만 한다. §10에 없는 부록은 만들지 않는다 |
+| `WEB.md`, `RESULT_FILE.md`, `OR_SPEC.md`, `DATA_QUALITY.md`, `EVAL_SET.md`, `ML_EVAL.md`, `REPAIR_MAP.md` | 부록 | `CONTRACT.md` §10 '붙인 부록' 줄에 적힌 것만 P2 시작 시(`DATA_QUALITY.md`는 P1에서) `~/finals/contract/addenda/README.md`의 명령으로 복사하고 빈칸을 채워 보고한다. `CONTRACT.md` §0 '보조 세션 출력 파일'이 "반영 대기"인 파일은 보조 세션이 쓰는 중이므로 건드리지 않는다. 보조 세션이 채운 파일은 읽고 반영만 한다. §10에 없는 부록은 만들지 않는다 |
 | `CARD_REF.md` | 카드 발췌 (응시자가 둠, 없을 수 있음) | 읽기만. 그 안의 숫자·상태명·컬럼명·도구명은 예시다. 과제 README·데이터와 다르면 README가 맞고 차이는 `CONTRACT.md` §9에 등록한다 |
 | `RESEARCH.md`, `RUBRIC.md` | 보조 세션 출력 파일 (research·rubric specialist) | 있으면 읽고 §9·§3에 반영만 한다. 직접 만들지 않는다 |
 | `web/` | 구현 코드 (boilerplate 사용 시에만 존재) | 기반 코드 안내는 `web/BOILERPLATE.md`. 없으면 무시한다 |
-| `~/finals/` | 응시자 참고 자료 | `CONTRACT.md` §10에 경로가 적힌 파일과, 그 shape 문서가 이름을 댄 `~/finals/snippets/{py,ts}/<이름>.*`만 읽는다. 예외는 하나, P0 프롬프트가 마지막 단계에 읽으라고 한 `~/finals/domain/CARD_INDEX.md`다. `~/finals/domain/scenarios/`의 카드 원본은 읽지 않는다. snippets는 과제 폴더로 복사해 고쳐 쓴다. 폴더 전체를 훑지 않는다 |
+| `~/finals/` | 응시자 참고 자료 | `CONTRACT.md` §10에 경로가 적힌 파일과, 그 shape 문서가 이름을 댄 `~/finals/snippets/{py,ts}/<이름>.*`만 읽는다. 예외는 둘이다. P0 프롬프트가 마지막 단계에 읽으라고 한 `~/finals/domain/CARD_INDEX.md`, 그리고 부록을 복사할 때의 `~/finals/contract/addenda/`다. `~/finals/domain/scenarios/`의 카드 원본은 읽지 않는다. snippets는 과제 폴더로 복사해 고쳐 쓴다. 폴더 전체를 훑지 않는다 |
 
 ## 작업 방식
 
 - 응시자가 이 진행 방식 밖의 작업(디버깅, 서버 재시작, 계약 밖 기능, 다른 접근법 시도 등)을 즉석으로 요청하면 이 파일의 진행 방식보다 그 요청을 따른다. 범위가 바뀌면 `DECISIONS.md`에 한 줄 남긴다. 금지 사항은 예외 없이 지킨다.
-- 질문으로 멈추지 않는다. `CONTRACT.md` §9 "되돌릴 비용"이 높음인 가정만 질문하고, 나머지는 §9에 등록한 채 진행한다.
+- 질문으로 멈추지 않는다. `CONTRACT.md` §9 "되돌릴 비용"이 높음인 가정만 보고에 질문으로 적고, 답이 올 때까지는 그 가정대로 진행한다. 나머지는 §9에 등록한 채 진행한다.
 - `CONTRACT.md` §7의 AC 순서대로 한 번에 하나의 수직 흐름을 완성한다. 계약에 없는 기능·디자인·리팩터링은 하지 않는다.
-- 항상 유효한 baseline을 먼저 만들고, 독립 검증기가 통과한 뒤에만 개선한다. 같은 AC의 검증이 `date`로 잰 20분 넘게 실패하면 `CONTRACT.md` §6 baseline 방식으로 되돌리고 `DECISIONS.md`에 "결정" 줄을 남긴다.
+- 항상 유효한 baseline을 먼저 만들고, 독립 검증기가 통과한 뒤에만 개선한다. 같은 AC의 검증이 `date`로 잰 20분 넘게 실패하면 `CONTRACT.md` §6 baseline 방식으로 되돌리고 `DECISIONS.md`에 "결정" 줄을 남긴다. §6에 baseline이 없거나 baseline으로도 통과하지 못하면 §7 상태를 실패로 적고 원인을 §0에 남긴 뒤 다음 AC로 간다.
 - placeholder를 과제 기능으로 착각하지 않는다. 쓰지 않으면 지우고, 쓰면 과제 이름과 규칙으로 바꾼다.
 - 제공 데이터는 파일을 읽어 적재한다. 값을 코드에 하드코딩하지 않는다. 데이터 전체를 출력하지 않고 헤더·샘플·통계만 본다. §4 사용 금지 컬럼은 어떤 계산에도 쓰지 않는다.
 - 새 의존성은 꼭 필요할 때만 추가한다. 설치가 5분 넘게 막히면 표준 기능으로 대체한다.

@@ -1,6 +1,6 @@
 # snippets: 복사해 쓰는 검증기·baseline 재료
 
-> **대상: 에이전트 참고.** shape 문서가 이름을 댄 파일만 §10의 경로에서 읽는다. kit 이 아니라 "검증기와 baseline 을 20분 안에 세우는 재료"다.
+> **대상: 사람(학습용 목록).** 에이전트는 이 README를 읽지 않고, shape 문서가 이름을 댄 파일만 §10의 경로에서 읽는다. kit 이 아니라 "검증기와 baseline 을 20분 안에 세우는 재료"다.
 
 ## 규칙
 
@@ -14,13 +14,13 @@
 
 | 이름 | 용도 | 쓰는 shape | 핵심 함수 |
 |---|---|---|---|
-| `validate_schedule` | 스케줄 hard constraint 독립 검증(누락·중복·미등록 작업/설비·선후·겹침·정비·release·end<start) + makespan/tardiness KPI | or_optimization, simulation_whatif | `validate_schedule(problem, schedule)` / `validateSchedule` |
-| `greedy_assign` | 항상 feasible 한 baseline: list scheduling greedy, 용량 제약 배정 + 배정 검증 | or_optimization, web_fullstack(계산 포함) | `greedy_schedule`, `greedy_capacity_assign`, `validate_assignment` |
-| `group_compare` | 그룹별 robust z-score, rolling z, EWMA 경보, 이상군 vs 정상군 비교 표(효과크기, evidence) | data_analysis_ml, simulation_whatif | `robust_z_by_group`, `ewma_alarm`, `compare_groups` |
+| `validate_schedule` | 스케줄 hard constraint 독립 검증(누락·중복·미등록 작업/설비·선후·겹침·정비·release·end<start) + makespan/tardiness KPI | or_optimization, simulation_whatif, web_fullstack(계산 포함) | `validate_schedule(problem, schedule)` / `validateSchedule` |
+| `greedy_assign` | 항상 feasible 한 baseline: list scheduling greedy, 용량 제약 배정 + 배정 검증 | or_optimization, simulation_whatif | `greedy_schedule`, `greedy_capacity_assign`, `validate_assignment` |
+| `group_compare` | 그룹별 robust z-score, rolling z, EWMA 경보, 이상군 vs 정상군 비교 표(효과크기, evidence) | data_analysis_ml, etl_pipeline, web_fullstack(계산 포함) | `robust_z_by_group`, `ewma_alarm`, `compare_groups` |
 | `time_split` | 시간순·그룹 단위 분할, 누수 점검(미래 시각 컬럼, 타깃 프록시, 분할 간 중복 id) | data_analysis_ml | `time_split`, `group_split`, `leakage_report` |
 | `fts_search` | 문단 청킹 + BM25(한글 2-gram) + citation 형식 + `min_score`/`matched_terms` 기반 기권 규칙, py 는 sqlite FTS5 변형 포함 | rag_agent | `BM25Index.search`, `to_citations` |
-| `csv_load` | 인코딩(utf-8/cp949) 감지, 구분자 추정, 헤더 정규화·충돌 검사, 컬럼 단위 타입 추론(ID·앞자리 0 은 문자열 유지), 날짜 파싱 옵션, 프로파일, 중복 키 | 모든 shape (P1 데이터 계약) | `load_csv(path, parse_dates, keep_as_text)`, `profile`, `duplicate_keys` |
-| `metrics` | MAE/RMSE/MAPE(y=0 제외 수 보고)/R2, precision/recall/F1, PR-AUC(=average precision), ROC-AUC, Recall@K, 스케줄 KPI. 길이 불일치는 예외 | data_analysis_ml, or_optimization | `regression_report`, `classification_report`, `schedule_kpis` |
+| `csv_load` | 인코딩(utf-8/cp949) 감지, 구분자 추정, 헤더 정규화·충돌 검사, 컬럼 단위 타입 추론(ID·앞자리 0 은 문자열 유지), 날짜 파싱 옵션, 프로파일, 중복 키 | 데이터 파일이 있는 모든 shape (P1 데이터 계약) | `load_csv(path, parse_dates, keep_as_text)`, `profile`, `duplicate_keys` |
+| `metrics` | MAE/RMSE/MAPE(y=0 제외 수 보고)/R2, precision/recall/F1, PR-AUC(=average precision), ROC-AUC, Recall@K, 스케줄 KPI. 길이 불일치는 예외 | data_analysis_ml, etl_pipeline, or_optimization, rag_agent, simulation_whatif, unknown | `regression_report`, `classification_report`, `schedule_kpis` |
 
 ## 실행 명령
 
