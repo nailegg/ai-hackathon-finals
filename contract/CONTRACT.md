@@ -110,4 +110,4 @@
 - 런타임·라이브러리 확인 결과 (node, python3, pandas, 솔버):
 - Job/Worker 필요: 예/아니오
 - 검증 스크립트: 과제 루트 `verify_fast.sh` / `verify_full.sh` (내용은 파일에만 둔다. 여기에는 만든 시각만):
-- Boilerplate 매핑: 재사용 / 교체 / 삭제할 것
+- Boilerplate 매핑: 재사용 / 교체 / 삭제할 것 (P2에서 `web/BOILERPLATE.md`의 두 표를 보고 채운다. P0는 비워 둔다)

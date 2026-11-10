@@ -10,7 +10,7 @@
 - [ ] 저장 충돌 없음, 서버 실행 터미널 유지, Browser 포트/경로 일치
 - [ ] 실패한 테스트/미완성 요구사항을 문서에 사실대로 표시
 - [ ] `CONTRACT.md` §0·§7과 `DECISIONS.md` 최종 갱신 (**`git commit`·`git push` 금지**)
-- [ ] **용량:** 폴더 전체 제출이고 용량 제한이 있으면 서버를 끄지 말고 build 산출물 `web/.next-build`와 `web/.next/cache`부터 지운다(dev 서버가 쓰는 `web/.next` 자체는 지우지 않는다). 그래도 크면 `web/node_modules`를 지우고 SUBMISSION.md의 설치 명령(`pnpm install --frozen-lockfile && pnpm bootstrap`)으로 재현 가능함을 적는다. 지우기 전에 서버 확인·제출 미리보기에 필요한지 판단한다
+- [ ] **용량:** 폴더 전체 제출이고 용량 제한이 있으면 서버를 끄지 말고 build 산출물 `web/.next-build`와 `web/.next/cache`부터 지운다(dev 서버가 쓰는 `web/.next` 자체는 지우지 않는다). 그래도 크면 `web/node_modules`를 지우고 SUBMISSION.md의 설치 명령(`cd web && cp -n .env.example .env && pnpm install --frozen-lockfile && pnpm bootstrap && pnpm dev`)으로 재현 가능함을 적는다. 쿠키 설정을 `web/.env`에 넣었으면 그 두 줄도 SUBMISSION.md에 적는다. 지우기 전에 서버 확인·제출 미리보기에 필요한지 판단한다
 
 ## T+320 근처
 - [ ] 플랫폼 **제출 미리보기** 확인 후 결과 확정; 확정 후 수정 불가

@@ -176,10 +176,10 @@ git clone --depth 1 https://github.com/nailegg/web_boilerplate.git web   # 대�
 bash web/scripts/exam-init.sh --install
 ```
 
-`exam-init.sh`는 boilerplate의 개발 이력과 유지보수 문서를 지우고, 의존성 설치와 DB 초기화까지 한다. 끝나면 **Terminal 3**에서 `cd <과제 루트>/web && pnpm dev`를 띄우고, 플랫폼 내부 브라우저에서 `/login` → `admin@example.com` / `admin12345` → `/admin`이 열리는지 본다.
+`exam-init.sh`는 boilerplate의 개발 이력과 유지보수 문서를 지우고, 의존성 설치와 DB 초기화까지 한다. 끝나면 **Terminal 3**에서 `cd <과제 루트>/web && pnpm dev`를 띄우고, 플랫폼 내부 브라우저에서 `/login` → `admin@example.com` / `admin12345` → `/admin`이 열리는지 본다. exam-init이 `WARN: pnpm 설치 실패`를 출력했으면 이후 모든 `pnpm`을 WARN이 알려 준 명령으로 바꿔 친다.
 
 - 로그인 뒤 다시 `/login`으로 돌아오면 쿠키 문제다. `web/.env`에 `COOKIE_SAMESITE="none"`, `COOKIE_SECURE="true"`를 추가하고 서버를 재시작한다.
-- 설치가 5분 넘게 실패하면 `rm -rf web`. 지정 스택이나 결과물 경로로 간다.
+- 설치가 5분 넘게 실패하면 `rm -rf web`. 지정 스택이나 결과물 경로로 간다. 웹이 꼭 필요하면 새 프레임워크를 받지 않고 이미 있는 런타임의 표준 라이브러리 서버(node 내장 http 또는 python)로 간다.
 - P0 보고의 §10이 "Boilerplate 사용: 아니오"면 `rm -rf web`. `DECISIONS.md`는 지우지 않고 `HH:MM | 결정 | web/ 삭제 (boilerplate 미사용) |` 한 줄을 추가한다.
 
 **(나) 결과물·CLI 과제일 가능성이 높으면** 3절에서 본 런타임 확인 결과(python, pandas, 솔버 유무)를 메모해 둔다. §10 런타임 줄은 P2가 1)단계에서 직접 확인해 적으므로 이 메모는 대조용이다. `~/finals/snippets/`는 py·ts 둘 다 있으므로 어느 런타임이든 간다.
@@ -419,7 +419,7 @@ AGENTS.md를 읽고, CONTRACT.md는 §0 상태판 → §7 수용 기준 → §10
 ```text
 기능 추가를 멈추고 제출 감사를 해라. 최소 수정만 허용한다.
 1) §2 필수 산출물이 정확한 경로·파일명·형식으로 존재하는지 확인한다. sample 출력이 있으면 컬럼·순서·타입·행 수를 diff로 비교한다. §10 주 shape 문서의 '감사(P5)' 행에 적힌 항목도 확인한다.
-2) 깨끗한 상태에서 재현한다: 결과물 과제는 과제 폴더를 임시 위치에 복사해 §2 한 줄 실행 명령을 처음부터 돌리고 같은 결과가 나오는지 확인한다. 웹 과제는 build와 smoke를 3)의 verify_full.sh에 맡기고, web/이 있으면 여기서는 cd web && bash scripts/check-placeholders.sh 가 0건인지만 확인한다.
+2) 깨끗한 상태에서 재현한다: 결과물 과제는 과제 폴더를 임시 위치에 복사해 §2 한 줄 실행 명령을 처음부터 돌리고 같은 결과가 나오는지 확인한다. 웹 과제는 build와 smoke를 3)의 verify_full.sh에 맡기고, web/이 있으면 여기서는 bash web/scripts/check-placeholders.sh 가 0건인지만 확인한다.
 3) `bash verify_full.sh`(빌드·깨끗한 재현 포함)를 실행하고 §7 각 AC를 통과/실패/미검증으로 사실대로 표시한다. 실패를 통과로 바꾸지 않는다.
 4) §8 금지 행위 위반이 없는지 확인한다: git 쓰기 명령 흔적, 원본 데이터 변경(`/tmp/orig.sha`가 있으면 `shasum -c /tmp/orig.sha`로 대조, 없으면 mtime), 외부 전송, 하드코딩된 데이터 값, 절대경로, 대화형 입력.
 5) 엣지 입력(빈 파일, 결측 컬럼, 미지 ID)에서 명시적 오류로 끝나는지 1회씩 확인한다. 실행 시간을 측정해 7)의 DECISIONS.md 감사 줄에 함께 적는다.
@@ -439,7 +439,7 @@ AGENTS.md를 읽고, CONTRACT.md는 §0 상태판 → §7 수용 기준 → §10
 
 ```text
 과제 루트에 제출 문서를 작성해라. 과제 README가 형식이나 파일명을 지정하면 그것을 따르고, 없으면 SUBMISSION.md로 쓴다. 실제로 실행해 본 명령만 적는다.
-순서: 1) 한 줄 요약과 실행 환경(런타임 버전) 2) 설치와 한 줄 실행 명령(§2), 웹이면 서버 실행·접속 경로·역할별 테스트 계정 3) 산출물 목록과 위치 4) 방법: 입력 → 처리 → 출력, 핵심 계산과 baseline, 독립 검증 방법 5) 증거표: AC마다 주장 → 확인 명령 → 실제 출력 요약(P5에서 만든 것), 그리고 결과 지표 6) 주요 가정(§9에서 결과에 영향 있는 것)과 결정(DECISIONS 요약) 7) 한계와 미완료 항목(사실대로) 8) 개선 방향 3개.
+순서: 1) 한 줄 요약과 실행 환경(런타임 버전) 2) 설치와 한 줄 실행 명령(§2), 웹이면 설치부터 서버 실행까지의 명령(web/이 boilerplate면 cd web && cp -n .env.example .env && pnpm install --frozen-lockfile && pnpm bootstrap && pnpm dev, web/.env에 쿠키 설정을 넣었으면 그 두 줄도)·접속 경로·역할별 테스트 계정 3) 산출물 목록과 위치 4) 방법: 입력 → 처리 → 출력, 핵심 계산과 baseline, 독립 검증 방법 5) 증거표: AC마다 주장 → 확인 명령 → 실제 출력 요약(P5에서 만든 것), 그리고 결과 지표 6) 주요 가정(§9에서 결과에 영향 있는 것)과 결정(DECISIONS 요약) 7) 한계와 미완료 항목(사실대로) 8) 개선 방향 3개.
 분석·보고서 과제면 질문 → 데이터 → 방법 → 결과 → 한계 순서로 쓴다. 과장하지 말고 미검증은 미검증으로 적어라. 끝나면 §0을 "제출 문서 완료"로 갱신하고 DECISIONS.md에 한 줄 남겨라.
 ```
 
