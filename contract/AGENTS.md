@@ -36,7 +36,7 @@
 | 필수 AC | `CONTRACT.md` §7 "필수" 열이 "예"인 AC. 필수 AC가 모두 통과하기 전에는 품질 개선을 하지 않는다 |
 | 제출 문서 / 증거표 | 제출 문서는 P6에서 쓰는 `SUBMISSION.md`(과제가 파일명을 지정하면 그것). 증거표는 그 안의 표로, AC마다 "주장 → 확인 명령 → 실제 출력" 한 줄이다. 과제 README는 수정하지 않는다 |
 | 부록 / 부록 템플릿 | 부록은 과제 루트의 `WEB.md`, `RESULT_FILE.md`, `OR_SPEC.md`, `DATA_QUALITY.md`, `EVAL_SET.md`, `ML_EVAL.md`, `REPAIR_MAP.md`. 부록 템플릿은 그 원본 `~/finals/contract/addenda/*.md`. `CONTRACT.md` §10 "붙인 부록" 줄에 적힌 것만 쓴다 |
-| CARD_REF.md | 응시자가 시나리오 카드에서 Baseline·독립 검증·KPI·함정 절만 뽑아 과제 루트에 둔 발췌. 값은 예시이며 과제 README가 우선. 없을 수 있다 |
+| CARD_REF.md | 응시자가 시나리오 카드에서 Baseline·독립 검증·KPI·함정 절만 뽑아 과제 루트에 둔 발췌. 값은 예시이며 과제 README가 우선. 없을 수 있다. 어느 카드인지는 P0가 `CONTRACT.md` §10 "참고 카드 제안" 줄에 제안하고 응시자가 받아들일 때만 만들어진다 |
 | 산출물 | 채점자가 확인하는 결과(웹 화면, 결과 파일, 보고서). `CONTRACT.md` §2에 정한다. "결과 파일 과제"는 산출물이 파일인 과제를 뜻한다 |
 | T+n | 시작 시각에서 n분 뒤. 시작 시각은 `CONTRACT.md` §0 첫 줄에 응시자가 적는다. 문서의 T+n은 그 시각 기준이며, 기록에는 항상 실제 시계(HH:MM)를 쓴다 |
 
@@ -52,7 +52,7 @@
 | `CARD_REF.md` | 카드 발췌 (응시자가 둠, 없을 수 있음) | 읽기만. 그 안의 숫자·상태명·컬럼명·도구명은 예시다. 과제 README·데이터와 다르면 README가 맞고 차이는 `CONTRACT.md` §9에 등록한다 |
 | `RESEARCH.md`, `RUBRIC.md` | 보조 세션 출력 파일 (research·rubric specialist) | 있으면 읽고 §9·§3에 반영만 한다. 직접 만들지 않는다 |
 | `web/` | 구현 코드 (boilerplate 사용 시에만 존재) | 기반 코드 안내는 `web/BOILERPLATE.md`. 없으면 무시한다 |
-| `~/finals/` | 응시자 참고 자료 | `CONTRACT.md` §10에 경로가 적힌 파일과, 그 shape 문서가 이름을 댄 `~/finals/snippets/{py,ts}/<이름>.*`만 읽는다. snippets는 과제 폴더로 복사해 고쳐 쓴다. 폴더 전체를 훑지 않는다 |
+| `~/finals/` | 응시자 참고 자료 | `CONTRACT.md` §10에 경로가 적힌 파일과, 그 shape 문서가 이름을 댄 `~/finals/snippets/{py,ts}/<이름>.*`만 읽는다. 예외는 하나, P0 프롬프트가 마지막 단계에 읽으라고 한 `~/finals/domain/CARD_INDEX.md`다. `~/finals/domain/scenarios/`의 카드 원본은 읽지 않는다. snippets는 과제 폴더로 복사해 고쳐 쓴다. 폴더 전체를 훑지 않는다 |
 
 ## 작업 방식
 

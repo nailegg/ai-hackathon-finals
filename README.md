@@ -60,14 +60,14 @@ git clone --depth 1 https://github.com/nailegg/ai-hackathon-finals.git ~/finals
 | [contract/](contract) | 에이전트 (사람이 확정) | `CONTRACT.md` 계약서 템플릿(§0 상태판 ~ §10), `AGENTS.md` 에이전트 규칙, `DECISIONS.md` 결정 기록, `addenda/` 형태별 부록 템플릿 7종 | T+0에 세 파일을 과제 루트로 복사. 부록은 P2가 복사 |
 | [prompts/](prompts) | 사람이 복사해 붙임 | P0 계약 → P1 데이터 → P2 AC1 → P3 반복 → P4 체크포인트 → P5 감사 → P6 제출 문서. 각 파일 위에 "언제, 사람이 할 일" 안내. `specialists/`는 보조 세션용 6종 | 시간표의 해당 구간 |
 | [shapes/](shapes) | 에이전트 (§10 경로) | 형태 8가지별 판별 신호, 산출물, 330분 단계, Baseline, 독립 검증, 지표, 함정, 보조 세션 조건 | 사람이 §10에 1~2장 경로를 적으면 에이전트가 읽음 |
-| [domain/](domain) | 사람 학습, 일부는 에이전트 참조 | `glossary.md` 용어 8절, `kpi_formulas.md` KPI 사전(사람용), `data_patterns.md` 데이터 테이블 8종과 조인 지도(사람용), `data_checklist.md` 데이터 검사 순서·함정(에이전트용), `scenarios/S01~S11.md` 출제 시나리오 가설 카드 | 사람은 11/9~10에 공부. 시험 중 에이전트에게 가는 것은 `data_checklist.md` 경로와 카드 발췌(`CARD_REF.md`)뿐. KPI 정의식은 사람이 §6에 옮겨 적는다 |
+| [domain/](domain) | 사람 학습, 일부는 에이전트 참조 | `glossary.md` 용어 8절, `kpi_formulas.md` KPI 사전(사람용), `data_patterns.md` 데이터 테이블 8종과 조인 지도(사람용), `data_checklist.md` 데이터 검사 순서·함정(에이전트용), `scenarios/S01~S11.md` 출제 시나리오 가설 카드 | 사람은 11/9~10에 공부. 시험 중 에이전트에게 가는 것은 `data_checklist.md` 경로, P0가 마지막에 읽는 카드 색인 `CARD_INDEX.md`(카드마다 한 줄), 카드 발췌(`CARD_REF.md`)뿐. KPI 정의식은 사람이 §6에 옮겨 적는다 |
 | [snippets/](snippets) | 에이전트가 복사 | 검증기·baseline·분할·검색·CSV·지표 함수 7종, py와 ts 동일 동작, 각 파일이 자가 테스트 | shape 문서가 이름을 댄 것만 과제 폴더로 복사 |
 | [checklists/](checklists) | 사람 | `grading_2h.md` 2시간 심사 가설과 대비, `submission.md` 제출 절차, `recovery.md` 끊김·모델 오류 복구 | P5, 제출, 장애 때 |
 | [study/](study) | 사람 전용 | `READING_ORDER.md` 저장소 안내·읽는 순서·공부할 개념, `README.md` 11/9~10 시간표, `check_questions.md` 체크 문제 10개 | 시험 전. 시험 중에는 열지 않음 |
 
 ## 규칙 요약 (왜 그런지와 함께)
 
-- **에이전트에게 주는 참고 문서는 정해져 있다.** 주 shape 1장(+계산 shape 1장), 카드 발췌 `CARD_REF.md` 0~1개, 데이터 체크리스트 `data_checklist.md`, shape가 이름을 댄 snippets, 과제 루트의 부록. 전부 `CONTRACT.md` §10에 경로로 적는다. 시나리오 카드 원본, KPI 사전, 데이터 패턴 문서, `~/finals` 전체는 읽히지 않는다. 이유: 가설 11장과 지표 61개를 다 읽은 에이전트는 과제에 없는 화면·스키마·지표를 만든다. 지표 정의식은 사람이 필요한 행만 §6에 옮겨 적는다.
+- **에이전트에게 주는 참고 문서는 정해져 있다.** 주 shape 1장(+계산 shape 1장), 카드 발췌 `CARD_REF.md` 0~1개, 데이터 체크리스트 `data_checklist.md`, shape가 이름을 댄 snippets, 과제 루트의 부록. 전부 `CONTRACT.md` §10에 경로로 적는다. 어느 카드를 발췌할지는 P0가 계약 초안을 쓴 뒤 색인 `domain/CARD_INDEX.md`만 보고 제안하고 사람이 받아들일지 정한다. 시나리오 카드 원본, KPI 사전, 데이터 패턴 문서, `~/finals` 전체는 읽히지 않는다. 이유: 가설 11장과 지표 61개를 다 읽은 에이전트는 과제에 없는 화면·스키마·지표를 만든다. 지표 정의식은 사람이 필요한 행만 §6에 옮겨 적는다.
 - **`CONTRACT.md` §1~§8 본문은 사람이 확정한다.** 초안은 에이전트가 쓰지만, "확정" 뒤에는 §0 상태판, §4 데이터 계약, §7의 상태 열, §9 가정 추가, §10의 런타임·검증·부록 줄만 에이전트가 고친다. 규칙은 `CONTRACT.md` 머리말 한 곳에만 있고 다른 문서는 그것을 가리킨다. 이유: 요구사항이 구현 중에 조용히 바뀌는 것을 막는다.
 - **AC 상태는 검증 스크립트가 통과할 때만 바뀐다.** 과제 루트의 `verify_fast.sh`(검증기·curl·테스트, AC마다 수십 초)와 `verify_full.sh`(빌드·깨끗한 재현 포함, P5와 제출 전)가 실체이고, CONTRACT에는 이름만 적는다. 채점자용 한 줄 실행 명령은 §2에 따로 둔다. 이유: 심사는 2시간이라 돌아가는 것만 점수가 되고, "됐다"는 말은 점수가 아니다.
 - **카드는 가설이고 README가 우선이다.** `domain/scenarios/`의 11장은 공개된 하이닉스 AX 방향을 근거로 한 연습용 추정이다. 과제와 70% 닮았어도 30%는 다르다. 그래서 원본 대신 Baseline·독립 검증·KPI·함정 절만 발췌해 주고, 그 안의 숫자·상태명·컬럼명도 예시로 취급한다.
