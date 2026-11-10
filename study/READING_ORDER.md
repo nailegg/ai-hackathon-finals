@@ -12,7 +12,7 @@
 | `contract/AGENTS.md` | 에이전트 행동 규칙. 우선순위, 금지 사항(git·API 키), 디렉터리 지도, 검증·보고 방식 | 에이전트 | T+0 복사. 자동 로드되는 에이전트도 있고 아닌 것도 있어 RUNBOOK 4절 첫머리의 질문으로 확인하고, 아니면 그 에이전트의 파일명(CLAUDE.md 등)으로 사본을 둔다. P0~P4 첫 줄도 읽으라고 한다 |
 | `contract/DECISIONS.md` | append-only 결정 기록. `HH:MM \| 종류 \| 내용 \| 근거` | 둘 다 | 과정 평가와 서술형의 근거 |
 | `contract/addenda/` | 형태별 부록 템플릿 7종(WEB, RESULT_FILE, OR_SPEC, DATA_CONTRACT→DATA_QUALITY, RAG_EVAL→EVAL_SET, ML_EVAL, REPAIR_MAP). `README.md`에 복사 명령 | 에이전트 | §10에 적힌 것만 P2가 복사해 채움 |
-| `prompts/P0~P6` | 단계별로 붙여 넣는 프롬프트. P0 계약 → P1 데이터 → P2 AC1 → P3 반복(하단에 중간 보고·요구사항 추가·변경·품질 개선 블록) → P4 체크포인트 → P5 감사 → P6 제출 문서 | 사람이 복사 | 각 파일 위에 "언제·사람이 할 일" 안내 |
+| `prompts/P0~P6` | 단계별로 붙여 넣는 프롬프트. P0 계약 → P1 데이터 → P2 AC1 → P3 반복(하단에 중간 보고·요구사항 추가·변경·품질 개선 블록) → P4 체크포인트 → P5 감사 → P6 제출 문서 | 사람이 복사 | 본문은 런북 4~7절에 그대로 실려 있다. 시험장에서는 런북의 블록을 붙인다 |
 | `prompts/specialists/` | 보조 세션용 프롬프트 6종(or, data, rag, debug, research, rubric). 읽기 전용, 결과 파일 1개, 10분 | 사람이 복사 | shape 문서의 "보조 세션" 조건을 만족할 때만 |
 | `shapes/` | 과제 **형태**별 작업 명세 8장. 판별 신호, 산출물, 330분 단계, Baseline, 독립 검증, 지표, 함정, 보조 세션 조건 | 에이전트(§10 경로) | 주 shape 1장 + 계산 shape 0~1장 |
 | `domain/glossary.md` | 반도체 용어집 8절(전공정, 후공정, 보전, 물류, KPI, 안전, AX 용어, 자가 점검) | 사람 | 에이전트에게는 필요할 때만 |
@@ -34,7 +34,7 @@
 1. `RUNBOOK_330.md` 처음부터 끝까지. 시간표의 구간 이름(P0~P6)과 각 구간에서 **사람이** 하는 일만 기억한다.
 2. `README.md`의 형태 판별표와 "혼합 과제는 두 장까지" 문단. 주 shape / 계산 shape 구분. 시험 중 재분류용이 아니라 공부용·조회용이다. 확정 절차는 런북 5절 1번의 질문 셋.
 3. `contract/CONTRACT.md` 머리말(수정 권한)과 §0, §7, §9, §10만. 나머지 절은 제목만.
-4. `prompts/README.md` → `P0_contract.md`의 "사람 검토 체크" → `P2_slice.md`의 0)~6) 단계 → `P3_next_ac.md`의 "요구사항 추가·변경" 블록(사람이 먼저 하는 두 가지: TASK_SPEC.md에 원문, DECISIONS 한 줄).
+4. 런북 5절 3번의 검토 표 → 런북 6-1절 P2 블록의 0)~6) 단계 → 런북 6-5절 "요구사항 추가·변경"(사람이 먼저 하는 두 가지: TASK_SPEC.md에 원문, DECISIONS 한 줄). 프롬프트 본문은 런북에 실려 있으므로 `prompts/` 파일을 따로 열 필요는 없다.
 - 확인: 시간표를 보지 않고 "T+15에 내가 하는 5가지"를 말할 수 있다(§10 경로 저장 → P1 붙이기 → 초안 검토 → 카드 제안 수락 여부 → 보조 세션 여부).
 
 ### 2단계 · 도메인 기초 (90분) — README를 읽을 때 단어가 걸리지 않게
@@ -53,7 +53,7 @@
 ### 4단계 · 도구와 심사 (45분) — 에이전트가 만든 것을 내가 판단할 수 있게
 12. `snippets/README.md` 목록 표와 "한계와 대체". `snippets/py/validate_schedule.py`와 `greedy_assign.py`를 열어 함수 시그니처와 반환 형식만 본다.
 13. `checklists/grading_2h.md` A~E. 심사 2시간이면 무엇이 점수가 되는지.
-14. `checklists/recovery.md`, `checklists/submission.md`, `prompts/P4_checkpoint.md`.
+14. `checklists/recovery.md`, `checklists/submission.md`, 런북 6-4절(P4 중단 전·재개).
 - 확인: "validator가 통과했다"는 보고를 받았을 때 내가 직접 칠 명령을 말할 수 있다(`bash verify_fast.sh`).
 
 ### 읽지 않아도 되는 것

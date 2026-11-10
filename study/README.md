@@ -11,7 +11,7 @@
 | 30분 | `domain/kpi_formulas.md` | Yield·OEE·MTBF·tardiness 분모·분자 설명 가능 |
 | 20분 | `domain/data_patterns.md` | 8개 테이블의 조인 키와 1:N 함정 설명 가능 |
 | 30분 | 시나리오 카드 S01, S04, S07, S08 (예선과 닮은 OR+웹 계열) + S02·S11은 Baseline 절만 | 각 카드의 baseline·validator 한 줄 요약. **예선이 OR+웹이었다는 사전 확률은 시험장에서 README를 읽을 때 버린다** |
-| 30분 | `RUNBOOK_330.md`를 처음부터 끝까지 읽고 프롬프트 P0~P6 훑기 | 시간표를 보지 않고 단계 순서를 말할 수 있음 |
+| 30분 | `RUNBOOK_330.md`를 처음부터 끝까지 읽기(프롬프트 P0~P6 본문 포함) | 시간표를 보지 않고 단계 순서를 말할 수 있음 |
 
 ## 11/10 (월)
 | 시간 | 할 일 | 완료 기준 |
@@ -32,6 +32,16 @@ cd ~/finals && diff <(ls shapes | sed 's/\.md$//' | sort) <(grep -oE '(web_fulls
 ```
 
 차이가 나오면 shape 파일 이름을 기준으로 나머지 두 곳을 고친다.
+
+## 프롬프트 일치 검사 (동결 직전)
+
+P0~P6 본문은 `prompts/` 파일과 `RUNBOOK_330.md` 두 곳에 있다. 한쪽만 고치면 런북에서 붙인 글이 원본과 달라진다. 아래 명령은 프롬프트 파일의 코드 블록 11개가 런북에 글자까지 같게 들어 있는지 본다.
+
+```bash
+cd ~/finals && python3 -c "import re,glob;r=open('RUNBOOK_330.md',encoding='utf-8').read();b=[(f,x) for f in sorted(glob.glob('prompts/P*.md')) for x in re.findall(r'\`\`\`text\n(.*?)\n\`\`\`',open(f,encoding='utf-8').read(),re.S)];m=[f for f,x in b if x not in r];print('프롬프트 일치' if len(b)==11 and not m else ('불일치',len(b),m))"
+```
+
+"불일치"가 나오면 이름이 나온 파일의 블록을 런북의 같은 절에 다시 붙여 넣는다.
 
 ## 시험 전날 밤
 - 규정 메일 재확인: 모델, git, 인터넷, 제출 방식, 점심 시각.

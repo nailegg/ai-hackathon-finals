@@ -58,7 +58,7 @@ git clone --depth 1 https://github.com/nailegg/ai-hackathon-finals.git ~/finals
 |---|---|---|---|
 | [RUNBOOK_330.md](RUNBOOK_330.md) | 사람 | 0절 개요·용어, 시간표, 터미널 배치, 구간별 할 일, 흔한 꼬임과 처방 | 시험 내내. 유일하게 열어 두는 문서 |
 | [contract/](contract) | 에이전트 (사람이 확정) | `CONTRACT.md` 계약서 템플릿(§0 상태판 ~ §10), `AGENTS.md` 에이전트 규칙, `DECISIONS.md` 결정 기록, `addenda/` 형태별 부록 템플릿 7종 | T+0에 세 파일을 과제 루트로 복사. 부록은 P2가 복사 |
-| [prompts/](prompts) | 사람이 복사해 붙임 | P0 계약 → P1 데이터 → P2 AC1 → P3 반복 → P4 체크포인트 → P5 감사 → P6 제출 문서. 각 파일 위에 "언제, 사람이 할 일" 안내. `specialists/`는 보조 세션용 6종 | 시간표의 해당 구간 |
+| [prompts/](prompts) | 사람이 복사해 붙임 | P0 계약 → P1 데이터 → P2 AC1 → P3 반복 → P4 체크포인트 → P5 감사 → P6 제출 문서. P0~P6 본문은 런북에도 그대로 실려 있어 시험장에서는 런북의 블록을 붙인다(이 폴더는 원본). `specialists/`는 보조 세션용 6종 | 시간표의 해당 구간 |
 | [shapes/](shapes) | 에이전트 (§10 경로) | 형태 8가지별 판별 신호, 산출물, 330분 단계, Baseline, 독립 검증, 지표, 함정, 보조 세션 조건 | 사람이 §10에 1~2장 경로를 적으면 에이전트가 읽음 |
 | [domain/](domain) | 사람 학습, 일부는 에이전트 참조 | `glossary.md` 용어 8절, `kpi_formulas.md` KPI 사전(사람용), `data_patterns.md` 데이터 테이블 8종과 조인 지도(사람용), `data_checklist.md` 데이터 검사 순서·함정(에이전트용), `scenarios/S01~S11.md` 출제 시나리오 가설 카드 | 사람은 11/9~10에 공부. 시험 중 에이전트에게 가는 것은 `data_checklist.md` 경로, P0가 마지막에 읽는 카드 색인 `CARD_INDEX.md`(카드마다 한 줄), 카드 발췌(`CARD_REF.md`)뿐. KPI 정의식은 사람이 §6에 옮겨 적는다 |
 | [snippets/](snippets) | 에이전트가 복사 | 검증기·baseline·분할·검색·CSV·지표 함수 7종, py와 ts 동일 동작, 각 파일이 자가 테스트 | shape 문서가 이름을 댄 것만 과제 폴더로 복사 |
