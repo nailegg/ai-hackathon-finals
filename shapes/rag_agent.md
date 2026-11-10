@@ -12,7 +12,7 @@
 - 평가 하네스 과제: "답변 품질을 평가하라", LLM judge, 골든셋
 
 ## 산출물 형태
-- 채점자가 먼저 볼 것: 질문 세트 실행 결과 JSONL(`answer, citations[], tool_trace[], requires_approval`)과 집계 표(정답·인용·거절)
+- 채점자가 먼저 볼 것: 질문 세트 실행 결과 파일(형식과 필드명은 README·sample 그대로. 지정이 없을 때의 예: JSONL에 `answer, citations[], tool_trace[], requires_approval`)과 집계 표(정답·인용·거절)
 - 실행 한 줄 명령으로 전체 질문 세트 처리. 화면은 질문 입력 → 근거 펼치기 → 승인 버튼
 - 평가 하네스 변형: per-example JSONL + 축별 집계 + 실패 사례 목록
 
@@ -21,12 +21,14 @@
 - 화면이 있으면 `WEB.md`, 결과 파일만이면 `RESULT_FILE.md`
 
 ## 330분 단계
+> P0·P1 행은 이미 지난 단계의 점검표다. 빠진 것이 있어도 확정된 CONTRACT 본문은 고치지 않고 §9에 적고 보고한다. 시각은 권장이고, 실제 진행은 CONTRACT §0과 §7의 필수 AC 게이트를 따른다.
+
 | 구간 | 이 형태에서 할 일 |
 |---|---|
 | T+5~15 계약(P0) | **런타임 LLM API 제공 여부**를 §10에 확정(키·모델·호출 방법 근거). 없으면 LLM 없는 범위로 §6 재정의. 허용 도구 목록을 §5에 |
 | T+15~25 데이터(P1) | 문서 수·형식·버전·유효일·중복, 질문 세트 구조를 §4에. PDF면 텍스트 추출 가능 여부 1분 확인 |
 | T+25~90 AC1(P2) | 문서 파싱 → 키워드/BM25/SQLite FTS 검색 → 근거 발췌 → 인용 붙인 답변 → 근거 없으면 거절. 질문 3개로 확인 |
-| T+90~점심 / 점심후~T+255 (P3, P4) | 읽기 전용 도구 1~2개(SQL SELECT·집계), 승인 게이트(propose → approve → execute, 감사 로그), 전체 질문 세트 집계 |
+| T+90~점심 / 점심후~T+255 (P3, P4) | README가 도구·승인을 요구할 때만: 읽기 전용 도구 1~2개(SQL SELECT·집계), 승인 게이트(propose → approve → execute, 감사 로그). 요구가 없으면 전체 질문 세트 집계와 거절 사례 보강 |
 | T+255~285 감사(P5) | 존재하지 않는 인용 0건, 거절 사례 통과, 문서 속 "규칙 무시" 문장이 도구 권한을 바꾸지 못함, 무승인 실행 0건 |
 | T+285~305 제출 문서(P6) | 축별 지표, 거절 정책, LLM 유무에 따른 한계 |
 | T+305~330 제출 | 결과 JSONL 필드명이 §2와 일치 |
@@ -37,12 +39,13 @@
 
 ## Baseline
 - SQLite FTS5 또는 단순 토큰 매칭으로 상위 3개 단락 검색, 단락 ID를 인용으로 붙임. 점수가 임계값 미만이면 "근거 없음"
-- 도구는 둘로 시작. 이름·인자는 README 기준(예: `query_readonly(sql)`에 SELECT·LIMIT 강제, `search_manual(q)`)
+- 도구와 승인은 README가 요구할 때만 만든다(요구가 없으면 검색, 인용, 거절까지만). 요구하면 둘로 시작하고 이름·인자는 README 기준(예: `query_readonly(sql)`에 SELECT·LIMIT 강제, `search_manual(q)`)
+- 문서 없이 DB 질의만 하는 과제(자연어를 SQL로): 질문 3개에 대해 읽기 전용 SELECT를 만들어 실행하고, 결과 행을 기대 결과와 비교하는 것이 AC1이다
 
 ## 독립 검증
 - 인용된 문서 ID·단락이 실제로 존재하고 답변 문장이 그 단락에 근거함
 - 거절해야 할 질문(문서에 없음)에서 답을 지어내지 않음
-- 쓰기 성격 도구는 `requires_approval=true`이고 승인 전 실행 로그가 없음
+- (승인 요구가 있을 때) 쓰기 성격 도구는 `requires_approval=true`이고 승인 전 실행 로그가 없음
 - 예시 AC 검증 명령: `python run_eval.py data/questions.json out/answers.jsonl && python score.py out/answers.jsonl` → 축별 지표; `python -m pytest tests/test_permissions.py -q`
 
 ## 지표
@@ -65,16 +68,16 @@
 평가축을 분리한다: correctness, groundedness, coverage/abstention, latency, cost. 결정론적 검사(형식, ID, 출처 존재, 문서 일치)를 먼저, LLM judge는 보조. 소규모 골든셋으로 일치율·반례 검사. 출력은 per-example JSONL, 집계 지표, 실패 사례, 기준과 한계. 루브릭이 모호하면 `prompts/specialists/specialist-rubric.md` 보조 세션(결과 `RUBRIC.md`).
 
 ## 쓸 snippets
-- `fts_search`: SQLite FTS 색인·검색·단락 ID 인용 골격
-- `csv_load`: 질문 세트·노트 로딩
+- `fts_search`: BM25 색인·검색·단락 ID 인용 골격(주 구현은 `BM25Index`. SQLite FTS5 판 `SqliteFTS`는 py에만 있다)
+- `csv_load`: CSV로 된 질문 세트·노트 로딩(json·jsonl은 표준 json 모듈로 읽는다)
 - `metrics`: 정답률·거절 정확도 집계
 
-## 참고 시나리오 카드
+## 참고 카드
 과제 루트에 `CARD_REF.md`가 있을 때만 그 파일을 읽는다. 카드 원본은 읽지 않는다.
 
 ## 만들지 않을 것
-- 다중 에이전트 역할극, 긴 체인, 자율 실행 권한
-- 임베딩 모델 다운로드(네트워크·시간 불확실)
+- README가 요구하지 않은 다중 에이전트 역할극, 긴 체인, 자율 실행 권한(README가 에이전트 여러 개를 요구하면 역할마다 함수 하나로 두고 순차 호출하며 tool_trace에 남긴다)
+- 임베딩 모델 다운로드(네트워크·시간 불확실). README가 임베딩 API나 모델을 제공하면 BM25 baseline이 통과한 뒤에 쓴다
 - 요구되지 않은 채팅 UI 꾸미기
 
 ## 보조 세션 (응시자용, 메인 세션은 띄우지 않는다)

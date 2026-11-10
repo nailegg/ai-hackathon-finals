@@ -20,6 +20,8 @@
 - 결과 파일 과제면 `RESULT_FILE.md`, 웹이면 `WEB.md`
 
 ## 330분 단계
+> P0·P1 행은 이미 지난 단계의 점검표다. 빠진 것이 있어도 확정된 CONTRACT 본문은 고치지 않고 §9에 적고 보고한다. 시각은 권장이고, 실제 진행은 CONTRACT §0과 §7의 필수 AC 게이트를 따른다.
+
 | 구간 | 이 형태에서 할 일 |
 |---|---|
 | T+5~15 계약(P0) | §6에 hard constraint를 **각각 검증 가능한 문장**으로 분리. 목적함수 단위·방향. 모호하면 §9 가정 |
@@ -36,7 +38,7 @@
 - 항상 **유효한 해**를 내는 것이 목표. 점수는 그다음
 
 ## 독립 검증
-- validator는 계산 코드와 **다른 파일**에서 결과만 읽어 재검사: 선후관계, 자원 겹침, 적격성, 용량, 시간창, 정비구간, 누락 작업 0
+- validator는 계산 코드와 **다른 파일**에서 결과만 읽어 재검사한다. 검사 항목은 CONTRACT §6 hard constraint마다 하나씩이다(스케줄 예: 선후관계, 자원 겹침, 적격성, 시간창, 정비구간, 누락 작업 0. 경로 예: 모든 지점 1회 방문, 차량 용량, 시간창. 적재·배정 예: 용량 초과 0, 중복·누락 0)
 - KPI(지연 합, makespan, 거리)를 validator가 다시 계산해 solver 보고값과 일치
 - 예시 AC 검증 명령: `python validate.py --problem data/problem.json --solution out/schedule.json` → `violations: 0`; `python validate.py --solution tests/bad_overlap.json` → 실패해야 함; 웹이면 `curl -X POST .../api/schedule/run` 후 `validate` 함수 위반 0
 
@@ -57,12 +59,12 @@
 - 솔버 값과 validator 재계산 값이 다른데 보고
 
 ## 쓸 snippets
-- `greedy_assign`: 우선순위 정렬 + 가장 빨리 비는 적격 자원 배정 골격
-- `validate_schedule`: 겹침·선후·적격·시간창 검사기. 결과 파일만 입력
+- `greedy_assign`: 우선순위 정렬 + 가장 빨리 비는 적격 자원 배정 골격(`greedy_schedule`). 시간축이 없는 용량 배정은 같은 파일의 `greedy_capacity_assign`과 `validate_assignment`
+- `validate_schedule`: 겹침·선후·적격·시간창 검사기. 결과 파일만 입력. 스케줄이 아닌 과제(경로, 적재)는 이 구조를 본떠 validator를 새로 쓴다
 - `csv_load`: 입력 CSV 로딩
 - `metrics`: KPI 집계 보조
 
-## 참고 시나리오 카드
+## 참고 카드
 과제 루트에 `CARD_REF.md`가 있을 때만 그 파일을 읽는다. 카드 원본은 읽지 않는다.
 
 ## 만들지 않을 것

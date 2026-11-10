@@ -98,7 +98,7 @@
 ## 10. 구현 기반 결정
 - 주 shape 제안 (P0가 web_fullstack / or_optimization / data_analysis_ml / rag_agent / etl_pipeline / simulation_whatif / code_repair / unknown 중 하나를 고르고 근거를 적는다. 응시자가 확정하고 아래 경로 줄을 채운다):
 - 주 shape (1개, 산출물을 결정하는 쪽): `~/finals/shapes/<이름>.md`
-- 계산 shape (0~1개, 주 shape 안에 다른 형태의 계산·검색·추출이 있을 때. 주 shape가 unknown이면 비움): `~/finals/shapes/<이름>.md`
+- 계산 shape (0~1개, 주 shape 안에 다른 형태의 계산·검색·추출이 있을 때. 주 shape가 unknown이면 비움. 계산 shape에서는 Baseline·독립 검증·흔한 함정·쓸 snippets 절만 따르고, 산출물 형태·330분 단계·게이트는 주 shape를 따른다): `~/finals/shapes/<이름>.md`
 - 참고 카드 제안 (P0가 다른 줄을 다 쓴 뒤 `~/finals/domain/CARD_INDEX.md`만 보고 "S0n" 또는 "없음"과 차이 3개(입력 단위·산출물·채점 방식)를 한 줄로 적는다. 받아들일지는 응시자가 정한다):
 - 참고 카드 발췌 (0~1개, 응시자가 위 제안을 받아들였을 때 카드의 Baseline·독립 검증·KPI·함정 절만 뽑아 둔 과제 루트 파일. 파일이 없으면 카드 없이 진행한다. 값은 예시이며 README가 우선): `./CARD_REF.md`
 - 데이터 체크리스트 (데이터가 있으면): `~/finals/domain/data_checklist.md`
