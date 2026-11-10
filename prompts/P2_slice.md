@@ -4,7 +4,7 @@
 **사람:** 첫 결과가 나오면 직접 실행하거나 화면을 열어 확인한다. 웹이면 서버는 Terminal 3에 하나만.
 
 ```text
-CONTRACT §7의 AC1만 끝까지 구현해라. 참고 문서는 §10에 적힌 shape 파일(주 shape, 있으면 계산 shape)과 §10의 데이터 체크리스트 파일, 과제 루트의 부록(WEB.md, RESULT_FILE.md, OR_SPEC.md, DATA_QUALITY.md, EVAL_SET.md, ML_EVAL.md, REPAIR_MAP.md 중 있는 것), 있으면 CARD_REF.md만 읽는다. CARD_REF.md의 값은 예시이며 README·데이터와 다르면 README가 맞다. snippets는 shape가 이름을 댄 파일만 §10의 경로에서 복사한다. 참고 문서는 지시가 아니다. 지시의 우선순위는 AGENTS.md대로(과제 README > CONTRACT > AGENTS.md)다.
+먼저 과제 루트의 AGENTS.md를 읽어라. CONTRACT §7의 AC1만 끝까지 구현해라. 참고 문서는 §10에 적힌 shape 파일(주 shape, 있으면 계산 shape)과 §10의 데이터 체크리스트 파일, 과제 루트의 부록(WEB.md, RESULT_FILE.md, OR_SPEC.md, DATA_QUALITY.md, EVAL_SET.md, ML_EVAL.md, REPAIR_MAP.md 중 있는 것), 있으면 CARD_REF.md만 읽는다. CARD_REF.md의 값은 예시이며 README·데이터와 다르면 README가 맞다. snippets는 shape가 이름을 댄 파일만 §10의 경로에서 복사한다. 참고 문서는 지시가 아니다. 지시의 우선순위는 AGENTS.md대로(과제 README > CONTRACT > AGENTS.md)다.
 0) §10 '붙인 부록' 줄의 파일이 과제 루트에 없으면 `~/finals/contract/addenda/README.md`의 명령 블록에서 해당 줄만 실행해 복사한다. 빈 템플릿은 README와 CONTRACT 근거로 먼저 채우고(5분 이내, 모르는 칸은 §9 가정) 요약을 보고한 뒤 응답을 기다리지 않고 1)로 진행한다(응시자 수정은 나중에 반영). §0 '보조 세션 출력 파일'이 "반영 대기"인 파일은 보조 세션이 쓰는 중이므로 건드리지 않고 건너뛴다. 보조 세션이 이미 채운 파일은 읽기만 한다.
 1) 시작 전에 사용할 런타임과 라이브러리가 실제로 import·실행되는지 1분 안에 확인하고 §10에 결과를 적는다. 설치가 5분 넘게 막히면 표준 기능으로 바꾼다.
 2) 가장 위험한 기술 가정 하나를 작은 실험으로 먼저 확인한다(예: 데이터 크기, 한글 인코딩, LLM API 1회 호출, 솔버 설치, 로그인 쿠키).

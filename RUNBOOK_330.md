@@ -105,7 +105,7 @@ cp ~/finals/contract/AGENTS.md ./AGENTS.md                 # 이미 있으면 ca
 cp ~/finals/contract/CONTRACT.md ./CONTRACT.md
 cp ~/finals/contract/DECISIONS.md ./DECISIONS.md
 node -v; command -v pnpm || echo "no pnpm"; python3 -V; python3 -c "import pandas, sklearn; print('pandas ok')" 2>&1 | tail -1
-find . -type f -not -path './.git/*' -not -name 'AGENTS.md' -not -name 'CONTRACT.md' -not -name 'DECISIONS.md' -exec shasum {} + > /tmp/orig.sha   # 원본 해시 (P5에서 대조)
+find . -type f -not -path './.git/*' -not -name 'AGENTS.md' -not -name 'CONTRACT.md' -not -name 'DECISIONS.md' -not -name 'TASK_SPEC.md' -exec shasum {} + > /tmp/orig.sha   # 원본 해시 (P5에서 대조)
 date +%H:%M   # CONTRACT §0 첫 줄에 시작/점심/종료 시각을 적는다
 ```
 
@@ -127,12 +127,14 @@ date +%H:%M   # CONTRACT §0 첫 줄에 시작/점심/종료 시각을 적는다
 - `AGENTS.md`는 세션 시작 때 읽히므로, **복사를 끝낸 뒤** Terminal 1에서 에이전트를 시작한다.
 - **제출 방식을 지금 확인한다.** 폴더 전체 업로드인지, 특정 파일만인지, 용량 제한이 있는지. 플랫폼의 제출 화면이 어디 있는지 찾아 둔다. 마지막 25분에 찾기 시작하면 늦다.
 - 홈(`~`)에 쓸 수 없으면 `/tmp/finals`에 clone하고 이후 경로를 그에 맞춰 읽는다.
+- **과제 루트에 `README.md`가 없으면**(명세가 PDF·플랫폼 화면·문서 여러 개·구두 설명이면) 사람이 명세 전문을 과제 루트 `TASK_SPEC.md`에 붙여 넣는다. PDF는 `pdftotext 파일.pdf TASK_SPEC.md`가 되면 그것을, 안 되면 에이전트에게 "제공 PDF를 텍스트로 뽑아 TASK_SPEC.md에 저장만 해라"를 시킨 뒤 사람이 읽고 빠진 부분을 채운다. 문서가 여러 개면 한 파일에 "## 출처: 파일명" 절로 이어 붙인다. 이후 모든 문서의 "README"는 이 파일을 뜻한다. P0 프롬프트가 이 경우를 알고 있으므로 따로 고칠 말은 없다. `TASK_SPEC.md`도 `/tmp/orig.sha`에 넣지 않도록 `find` 줄에 `-not -name 'TASK_SPEC.md'`를 더한다.
+- **에이전트가 `AGENTS.md`를 자동으로 읽는지 확인한다.** 세션을 시작하고 "AGENTS.md를 읽었나? 용어표의 '수직 흐름' 뜻을 한 줄로 말해라"라고 묻는다. 모르면 그 에이전트는 다른 파일명을 읽는 것이다(Claude Code는 `CLAUDE.md`, Gemini CLI는 `GEMINI.md`). `cp AGENTS.md CLAUDE.md`(또는 그 에이전트의 파일명)로 사본을 만들고 DECISIONS에 한 줄 적는다. P0~P4 프롬프트 첫 줄이 AGENTS.md를 읽으라고 하므로 사본이 없어도 규칙은 전달되지만, 재접속마다 다시 읽히려면 사본이 안전하다.
 
 ---
 
 ## 4. T+5~15 · 에이전트 P0 ‖ 사람 병렬 작업
 
-**Terminal 1**에서 에이전트를 시작하고 `~/finals/prompts/P0_contract.md`의 코드 블록을 붙여 넣는다. P0는 과제 README만 읽고 `CONTRACT.md` 초안을 쓴다(코드 금지, §4 제외). 약 10분 걸린다.
+**Terminal 1**에서 에이전트를 시작하고 `~/finals/prompts/P0_contract.md`의 코드 블록을 붙여 넣는다. P0는 AGENTS.md와 과제 README(없으면 `TASK_SPEC.md`)만 읽고 `CONTRACT.md` 초안을 쓴다(코드 금지, §4 제외). 약 10분 걸린다.
 
 그동안 사람은 **Terminal 2**에서 다음 둘 중 하나를 한다.
 
@@ -210,6 +212,7 @@ shape 문서의 "보조 세션" 절에 조건이 있다(예: 최적화에서 목
 - **T+120, T+200에 중간 점검.** Terminal 1에 중간 보고를 요청한다(`P3_next_ac.md`의 "중간 보고" 문구). 동시에 **Terminal 2에서 `bash verify_fast.sh`를 직접 돌려** 보고와 대조한다. 다르면 §7을 사실대로 고치게 한다. 남은 시간 대비 AC가 많으면 어느 AC를 줄일지 결정한다.
 - **점심 5분 전** `~/finals/prompts/P4_checkpoint.md`의 "중단 전" 프롬프트를 붙인다. 서버 터미널은 그대로 둔다. **복귀 후** 플랫폼 접속과 3000번 서버를 확인하고 "재개" 프롬프트를 붙인다.
 - **접속이 끊기면** 같은 P4 "재개" 프롬프트를 새 세션에 붙인다. 모델 오류·반복 장애는 `~/finals/checklists/recovery.md`.
+- **시험 중 요구가 추가되거나 바뀌면**(2단계 공개, 담당자 공지) 코드를 멈추고 계약부터 고친다. 원문을 `TASK_SPEC.md` 끝에 `## 추가 (HH:MM)`로 붙여 넣고 DECISIONS에 `HH:MM | 요구변경 | …` 한 줄, 그다음 `P3_next_ac.md`의 "요구사항 추가·변경" 프롬프트를 붙인다. 에이전트가 §7에 AC를 추가하고 제안을 보고하면 사람이 §2·§5·§6을 고치고 "확정"이라고 답한 뒤에야 P3로 돌아간다. 새 요구가 T+200 이후에 오면 필수 여부를 엄격히 따져 "아니오"인 것은 §8로 보낸다.
 - 필수 AC가 모두 통과했고 T+255 전이면, `P3_next_ac.md` 하단의 "품질 개선 1건" 프롬프트를 한 번만 쓴다.
 
 ---
@@ -243,4 +246,7 @@ shape 문서의 "보조 세션" 절에 조건이 있다(예: 최적화에서 목
 | 에이전트가 §1~§8 본문을 고쳤다 | "CONTRACT 머리말의 수정 권한 규칙을 읽어라. 그 변경은 되돌리고 DECISIONS에 제안으로 적어라." |
 | 에이전트가 CARD_REF의 스키마·상태명을 README보다 우선시 | "CARD_REF.md의 값은 예시다. README와 데이터가 정한 값으로 바꾸고 차이를 §9에 등록해라." |
 | 모델 capacity·API 오류, 접속 끊김 | `~/finals/checklists/recovery.md`. 세션이 바뀌면 `~/finals/prompts/P4_checkpoint.md`의 재개 프롬프트 |
+| 시험 중 요구사항이 추가·변경됨 | 코드를 멈춘다. 원문을 `TASK_SPEC.md` 끝에 `## 추가 (HH:MM)`로 붙이고 `P3_next_ac.md`의 "요구사항 추가·변경" 프롬프트. 계약 확정 뒤에만 P3 재개 |
+| 과제 루트에 README.md가 없다 | 명세를 `TASK_SPEC.md`에 붙여 넣는다(3절). P0 이후 모든 "README"는 그 파일이다 |
+| 에이전트가 AGENTS.md 규칙을 모른다(용어를 못 댄다) | `cp AGENTS.md CLAUDE.md`(그 에이전트의 규칙 파일명)로 사본을 두고 "AGENTS.md를 읽어라"고 말한다(3절) |
 | 과제 README가 커밋을 명시적으로 요구 | README 우선. 요구 범위에서만 커밋하고 push는 하지 않는다. DECISIONS에 기록 |

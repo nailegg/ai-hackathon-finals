@@ -4,7 +4,7 @@
 
 ## 우선순위
 
-1. 과제 `README.md`와 제공 파일
+1. 과제 `README.md`와 제공 파일. README.md가 없으면 응시자가 명세를 옮겨 적은 `TASK_SPEC.md`가 그 자리다(이 문서들의 "README"는 그 파일을 뜻한다)
 2. `CONTRACT.md` (과제 README에서 추출한 요구사항 계약이자 운영판)
 3. 이 파일
 4. 응시자의 직접 지시가 위와 충돌하면 응시자 지시를 따르고 `DECISIONS.md`에 기록한다
@@ -45,6 +45,7 @@
 | 경로 | 성격 | 규칙 |
 |---|---|---|
 | `README.md`, 제공 데이터·문서 | 과제 원본 | **수정·이동·삭제 금지**. 읽기만 한다. (코드 수리 과제의 제공 소스 코드는 예외: 수정 대상) |
+| `TASK_SPEC.md` | 과제 명세 사본 (README.md가 없을 때만 응시자가 만듦) | 과제 README와 같은 자격. 읽기만 한다. 명세가 바뀌면 응시자가 끝에 "## 추가 (HH:MM)" 절을 붙인다 |
 | `CONTRACT.md` | 요구사항 계약·운영판 | 구현 범위의 기준. 수정 권한은 CONTRACT.md 머리말의 규칙 하나를 따른다(초안 단계 후에는 §0, §4, §7 상태·verify, §9 추가, §10 런타임·검증·부록 줄만) |
 | `DECISIONS.md` | 결정·진행 기록 | append-only. 가정·선택·검증·완료한 AC를 한 줄씩 추가 |
 | `WEB.md`, `RESULT_FILE.md`, `OR_SPEC.md`, `DATA_QUALITY.md`, `EVAL_SET.md`, `ML_EVAL.md`, `REPAIR_MAP.md` | 부록 | `CONTRACT.md` §10 '붙인 부록' 줄에 적힌 것만 P2 시작 시 `~/finals/contract/addenda/README.md`의 명령으로 복사하고 빈칸을 채워 보고한다. `CONTRACT.md` §0 '보조 세션 출력 파일'이 "반영 대기"인 파일은 보조 세션이 쓰는 중이므로 건드리지 않는다. 보조 세션이 채운 파일은 읽고 반영만 한다. §10에 없는 부록은 만들지 않는다 |
